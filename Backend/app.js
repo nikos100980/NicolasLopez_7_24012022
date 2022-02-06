@@ -1,7 +1,10 @@
 // Importation du framework EXPRESS pour la creation de l'API
 const express = require("express");
 
+// Import du dotenv pour les variables d'environnement
+require('dotenv').config();
 
+// Création de l' apllication EXPRESS
 const app = express();
 
 app.use(express.json());
