@@ -11,10 +11,7 @@ module.exports = {
       idUSERS: {
         allowNull: false,
         type: Sequelize.INTEGER,
-        references: {
-          model: 'Users',
-          key: 'id'
-        }
+        
       },
       title: {
         allowNull: false,
@@ -35,10 +32,7 @@ module.exports = {
       idCOMMENTS: {
         allowNull: false,
         type: Sequelize.INTEGER,
-        references: {
-          model: 'Comments',
-          key: 'id'
-        }
+        
       },
       createdAt: {
         allowNull: false,

@@ -11,19 +11,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
     // define association here
-    models.Message.belongsTo(models.User, {
-      foreignKey:{
-        allowNull: false
-      }
-    });
-    models.Message.belongsTo(models.Comment, {
-      foreignKey:{
-        allowNull: false
-      }
-    });
-    models.Message.hasMany(models.Comment);
-    }
-  }
+    models.Message.belongsToMany(models.User,{ through: models.Comment});
+    
+  }}
   Message.init({
     idUSERS: DataTypes.INTEGER,
     title: DataTypes.STRING,
