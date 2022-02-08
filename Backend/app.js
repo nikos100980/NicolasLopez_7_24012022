@@ -7,6 +7,8 @@ require('dotenv').config();
 // Création de l' apllication EXPRESS
 const app = express();
 
+const userRoutes = require("./routes/users");
+
 app.use(express.json());
 
 // Configuration des CORS
@@ -16,7 +18,7 @@ app.use((req, res, next) => {
       "Access-Control-Allow-Headers",
       "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
     );
-    res.status(200).send('<h1>Bienvenue sur mon serveur !</h1>');
+    
     res.setHeader(
       "Access-Control-Allow-Methods",
       "GET, POST, PUT, DELETE, PATCH, OPTIONS"
@@ -25,6 +27,6 @@ app.use((req, res, next) => {
     next();
   });
 
-
+  app.use("/api/auth", userRoutes);
 
   module.exports = app;
