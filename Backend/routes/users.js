@@ -12,6 +12,6 @@ const userCtrl = require('../controllers/users');
 router.post('/signup', userCtrl.signup);
 
 // Creation de la route pour se connecter 
-router.post('/users/login', userCtrl.login);
+router.post('/login', userCtrl.login);
 
 module.exports = router;
