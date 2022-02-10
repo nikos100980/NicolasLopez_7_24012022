@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.User.belongsTomany(models.Message,{
+      models.User.belongsToMany(models.Message,{
         through: models.Like,
         foreignKey: 'idUSERS',
         otherKey: 'idMESSAGES',

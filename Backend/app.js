@@ -1,6 +1,9 @@
 // Importation du framework EXPRESS pour la creation de l'API
 const express = require("express");
 const path = require('path');
+
+const cookieParser = require('cookie-parser');
+
 //db
 const { sequelize } = require('./models/index');
 
@@ -12,9 +15,10 @@ const app = express();
 
 const userRoutes = require("./routes/users");
 
+
 app.use(express.json());
 
-
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 // Configuration des CORS
 app.use((req, res, next) => {
@@ -33,6 +37,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/auth", userRoutes);
+
 
 
 

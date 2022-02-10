@@ -10,6 +10,16 @@ const jwt = require("jsonwebtoken");
 // Importation du module crypto js afin de l'utiliser dans le cadre des recommandations RGPD pour le masquage des données sensibles ( en l'occurence là l'email)
 const cryptoJs = require("crypto-js");
 
+const maxAge = 3 * 24 * 60 * 1000;
+const createToken = (id,isAdmin)=>{
+  return jwt.sign(
+    { id, isAdmin },
+    `${process.env.RANDOM_TOKEN_SECRET}`,
+    {
+      expiresIn: maxAge,
+    }
+  )
+};
 // Le controller permettant la création d'un utilisateur avec le hash du mot de passe afin de sécuriser l'accés et les données confidentielles
 exports.signup = (req, res, next) => {
   const email = req.body.email;
@@ -90,19 +100,35 @@ exports.login = (req, res, next) => {
         if (!valid) {
           return res.status(401).json({ error: "Mot de passe incorrect !" });
         }
+        const token = createToken(userFound.id,userFound.isAdmin);
+        res.cookie('jwt',token, {httpOnly: true, maxAge});
         res.status(200).json({
           userId: userFound.id,
-          token: jwt.sign(
-            { userId: userFound.id, isAdmin: userFound.isAdmin },
-            `${process.env.RANDOM_TOKEN_SECRET}`,
-            {
-              expiresIn: "2h",
-            }
-          ),
+          isAdmin: userFound.isAdmin
+          // token: jwt.sign(
+          //   { userId: userFound.id, isAdmin: userFound.isAdmin },
+          //   `${process.env.RANDOM_TOKEN_SECRET}`,
+          //   {
+          //     expiresIn: "2h",
+          //   }
+          // ),
         });
       });
     })
     .catch((error) =>
       res.status(500).json({ error: `impossible de verifier l'utilisateur !` })
     );
+};
+// Ajout du module pour récuperer le profil de l'utilisateur
+exports.getProfile = async (req, res) => {
+  // on trouve l'utilisateur et on renvoie l'objet user
+  try {
+    const user = await models.User.findOne({
+      attributes: ['id','firstname','lastname','bio','picture'],
+      where: { id: req.params.id },
+    });
+    res.status(200).send(user);
+  } catch (error) {
+    return res.status(500).send({ error: "Erreur serveur" });
+  }
 };

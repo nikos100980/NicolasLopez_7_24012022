@@ -4,6 +4,8 @@
 const express = require('express');
 const router = express.Router();
 
+const auth = require('../middleware/auth');
+
 
 
 
@@ -13,5 +15,7 @@ router.post('/signup', userCtrl.signup);
 
 // Creation de la route pour se connecter 
 router.post('/login', userCtrl.login);
+
+router.get('/profiles/:id',auth,userCtrl.getProfile);
 
 module.exports = router;
