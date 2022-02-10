@@ -3,7 +3,7 @@
 
 const express = require('express');
 const router = express.Router();
-
+const multer = require('../middleware/multer-config');
 const auth = require('../middleware/auth');
 
 
@@ -17,5 +17,6 @@ router.post('/signup', userCtrl.signup);
 router.post('/login', userCtrl.login);
 
 router.get('/profiles/:id',auth,userCtrl.getProfile);
+router.put('/profiles/:id',auth, multer, userCtrl.updateProfile);
 
 module.exports = router;

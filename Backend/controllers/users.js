@@ -6,6 +6,7 @@ const models = require("../models");
 
 // Importation du module JSONWEBTOKEN pour s'assurer que l'utilisateur est bien le même sur l'ensemble du parcours utilisateur, il sera authentifié sur chaque route
 const jwt = require("jsonwebtoken");
+const fs = require('fs');
 
 // Importation du module crypto js afin de l'utiliser dans le cadre des recommandations RGPD pour le masquage des données sensibles ( en l'occurence là l'email)
 const cryptoJs = require("crypto-js");
@@ -131,4 +132,58 @@ exports.getProfile = async (req, res) => {
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });
   }
+};
+
+
+exports.updateProfile = async (req,res,next)=>{
+  const {bio , firstname, lastname, picture}= req.body;
+ 
+  try {
+    const userFound = await models.User.findOne({ where: {id: req.params.id}});
+    let newPicture;
+    if(userFound){
+      if(req.file && userFound.picture){
+        newPicture = `${req.protocol}://${req.get("host")}/api/upload/${
+          req.file.filename
+        }`;
+        const filename = userFound.picture.split("/upload")[1];
+        fs.unlink(`upload/${filename}`, (err) => {
+          // s'il y avait déjà une photo on la supprime
+          if (err) console.log(err);
+          else {
+            console.log(`Deleted file: upload/${filename}`);
+          }
+        });
+      } else if (req.file) {
+        newPicture = `${req.protocol}://${req.get("host")}/api/upload/${
+          req.file.filename
+        }`;
+      }
+      if (newPicture) {
+        userFound.picture = newPicture;
+      }
+      if (bio) {
+        userFound.bio = bio;
+      }
+      if (firstname) {
+        userFound.firstname = firstname;
+      }
+      if (lastname) {
+        userFound.lastname = lastname;
+      }
+
+      const newUserFound = await userFound.save({ fields: ["lastname","firstname", "bio", "picture"] }); // on sauvegarde les changements dans la bdd
+      res.status(200).json({
+        userFound: newUserFound,
+        messageRetour: "Votre profil a bien été modifié",
+      });
+    } else {
+      res
+        .status(400)
+        .json({ messageRetour: "Vous n'avez pas les droits requis" });
+    }
+      }catch (error) {
+        return res.status(500).send({ error: "Erreur serveur" });
+  }
+
 };
