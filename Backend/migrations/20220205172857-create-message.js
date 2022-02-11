@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      idUSERS: {
+      userId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
@@ -18,8 +18,8 @@ module.exports = {
 
         
       },
-      title: {
-        allowNull: false,
+      imageUrl: {
+        allowNull: true,
         type: Sequelize.STRING
       },
       content: {
@@ -34,15 +34,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
-      idCOMMENTS: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Comments',
-          key: 'id'
-        }
-        
-      },
+      
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

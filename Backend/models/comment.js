@@ -25,14 +25,27 @@ module.exports = (sequelize, DataTypes) => {
         })
     }
     
-  };
-      
-
     
   
+      
+
+};
+  
   Comment.init({
-    idUSERS: DataTypes.INTEGER,
-    idMESSAGES: DataTypes.INTEGER,
+    // userId: {
+    //   type: DataTypes.INTEGER,
+    //   references: {
+    //     model: 'Message',
+    //     key: 'id'
+    //   }
+    // },
+    // messageId:{
+    //   type: DataTypes.INTEGER,
+    //   references : {
+    //     model: 'User',
+    //     key: 'id'
+    //   }
+    // },
     comments: DataTypes.STRING
   }, {
     sequelize,

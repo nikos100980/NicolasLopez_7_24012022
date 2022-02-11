@@ -14,6 +14,7 @@ require("dotenv").config();
 const app = express();
 
 const userRoutes = require("./routes/users");
+const messageRoutes = require('./routes/messages');
 
 
 app.use(express.json());
@@ -37,6 +38,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/auth", userRoutes);
+app.use('/api/',messageRoutes);
 
 
 
