@@ -134,7 +134,7 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-
+// Ajout du module pour mettre à jour le profil de l'utilisateur 
 exports.updateProfile = async (req,res,next)=>{
   const {bio , firstname, lastname, picture}= req.body;
  
@@ -143,19 +143,19 @@ exports.updateProfile = async (req,res,next)=>{
     let newPicture;
     if(userFound){
       if(req.file && userFound.picture){
-        newPicture = `${req.protocol}://${req.get("host")}/api/upload/${
+        newPicture = `${req.protocol}://${req.get("host")}/images/${
           req.file.filename
         }`;
-        const filename = userFound.picture.split("/upload")[1];
-        fs.unlink(`upload/${filename}`, (err) => {
+        const filename = userFound.picture.split("/images")[1];
+        fs.unlink(`images/${filename}`, (err) => {
           // s'il y avait déjà une photo on la supprime
           if (err) console.log(err);
           else {
-            console.log(`Deleted file: upload/${filename}`);
+            console.log(`Deleted file: images/${filename}`);
           }
         });
       } else if (req.file) {
-        newPicture = `${req.protocol}://${req.get("host")}/api/upload/${
+        newPicture = `${req.protocol}://${req.get("host")}/images/${
           req.file.filename
         }`;
       }
@@ -186,4 +186,30 @@ exports.updateProfile = async (req,res,next)=>{
         return res.status(500).send({ error: "Erreur serveur" });
   }
 
+};
+
+// Ajout du module pour supprimer le compte utilisateur
+exports.deleteProfile = async (req,res,next)=>{
+  try {
+    const userFound = await models.User.findOne({ where: {id: req.params.id}});
+    if(userFound.picture !== null){
+      const filename = userFound.picture.split("/images")[1];
+        fs.unlink(`images/${filename}`, ()=>{
+          models.User.destroy({where: {id: req.params.id}});
+          res.status(200).json({ message:'Compte supprimé avec sa photo !'});
+        })
+      }else{
+        models.User.destroy({where: {id:req.params.id}},(err,result,fields)=>{
+          if(err){
+            console.log('Erreur deleteprofile'+err);
+            return res.status(400).json(err);
+          }
+          console.log('Compte supprimé !');
+          return res.status(201).json({ message: req.body.firstname + 'supprimé !' });
+        })}
+    
+    
+  } catch (error) {
+    return res.status(500).send({ error : 'Erreur serveur'});
+  }
 };

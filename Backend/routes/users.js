@@ -18,5 +18,6 @@ router.post('/login', userCtrl.login);
 
 router.get('/profiles/:id',auth,userCtrl.getProfile);
 router.put('/profiles/:id',auth, multer, userCtrl.updateProfile);
+router.delete('/profiles/:id', auth, multer, userCtrl.deleteProfile);
 
 module.exports = router;
