@@ -9,6 +9,7 @@ const auth = require('../middleware/auth');
 const messageCtrl = require('../controllers/messages');
 // Creation de la route pour la creation , en lui passant toujours l'authentification 
 router.post('/messages/new/',auth,multer,messageCtrl.createMessage);
+router.get('/messages',messageCtrl.getMessages);
 
 
 

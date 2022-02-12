@@ -17,7 +17,7 @@ exports.createMessage = async (req, res, next) => {
     await models.User.findOne({
       where: { id: userId },
     })
-      .then( async (userFound) => {
+      .then(async (userFound) => {
         if (userFound) {
           if (req.file) {
             imageUrl = `${req.protocol}://${req.get("host")}/images/${
@@ -25,7 +25,7 @@ exports.createMessage = async (req, res, next) => {
             }`;
           } else {
             imageUrl = null;
-          };
+          }
 
           const message = await models.Message.create({
             content: content,
@@ -42,16 +42,49 @@ exports.createMessage = async (req, res, next) => {
         }
       })
       .catch((error) => {
-        return res.status(500).json({ error: error });
+        res.status(500).json({ error: error });
       });
-  } catch (error)
-  {return res.status(500).send({ error: "Erreur serveur" });}
+  } catch (error) {
+    return res.status(500).send({ error: "Erreur serveur" });
+  }
 };
 
-// Ajout du module pour récuperer l'ensemble des messages utilisateurs 
+// Ajout du module pour récuperer l'ensemble des messages utilisateurs avec un ORDER descandant pour afficher les derniers messages en premier
 
-exports.getMessages = (req,res,next)=>{
-
-
-    
-}
+exports.getMessages = async (req, res, next) => {
+  try {
+    await models.Message.findAll({
+      attributes: ["id", "content", "attachment", "likes", "imageUrl"],
+      order: [["id", "DESC"]],
+      include: [
+        {
+          model: models.User,
+          attributes: ["firstname", "lastname", "picture"],
+        },
+        {
+          model: models.Comment,
+          attributes: ["comments", "UserId", "id"],
+          order: [["id", "DESC"]],
+          include: [
+            {
+              model: models.User,
+              attributes: ["picture", "lastname", "firstname"],
+            },
+          ],
+        },
+      ],
+    })
+      .then((messages) => {
+        if (messages) {
+          res.status(200).json(messages);
+        } else {
+          res.status(404).json({ error: "aucun message trouvé" });
+        }
+      })
+      .catch((error) => {
+        res.status(500).json({ error });
+      });
+  } catch (error) {
+    return res.status(500).send({ error: "Erreur serveur" });
+  }
+};
