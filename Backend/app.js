@@ -16,10 +16,14 @@ const app = express();
 const userRoutes = require("./routes/users");
 const messageRoutes = require('./routes/messages');
 
+// parse application/json
 
 app.use(express.json());
+// parse application/x-www-form-urlencoded
+
 
 app.use(cookieParser());
+
 app.use(express.urlencoded({ extended: true }));
 // Configuration des CORS
 app.use((req, res, next) => {
@@ -36,7 +40,7 @@ app.use((req, res, next) => {
 
   next();
 });
-
+app.use("./images", express.static(path.join(__dirname, "./images")));
 app.use("/api/auth", userRoutes);
 app.use('/api/',messageRoutes);
 

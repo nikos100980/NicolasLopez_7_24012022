@@ -11,9 +11,9 @@ exports.createMessage = async (req, res, next) => {
 
   const content = req.body.content;
   const attachment = req.body.attachment;
-  let imageUrl;
 
   try {
+    let imageUrl;
     await models.User.findOne({
       where: { id: userId },
     })
@@ -86,5 +86,93 @@ exports.getMessages = async (req, res, next) => {
       });
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });
+  }
+};
+
+// Ajout du module pour récuperer un message d'un utilisateur
+
+exports.getOneMessage = async (req, res, next) => {
+  try {
+    await models.Message.findOne({
+      where: { id: req.params.id },
+      include: [
+        {
+          model: models.User,
+          attributes: ["id", "lastname", "firstname", "picture"],
+        },
+        {
+          model: models.Comment,
+          order: [["id", "DESC"]],
+          attributes: ["comments", "UserId"],
+          includes: [
+            {
+              model: models.User,
+              attributes: ["picture", "lastname", "firstname"],
+            },
+          ],
+        },
+      ],
+    })
+      .then((message) => {
+        if (message) {
+          res.status(200).json(message);
+        } else {
+          res
+            .status(404)
+            .json({ error: "Le message selectionné n'a paqs été trouvé !" });
+        }
+      })
+      .catch((error) => {
+        res.status(500).json({ error });
+      });
+  } catch (error) {
+    return res.status(500).send({ error: "Erreur serveur" });
+  }
+};
+
+// Ajout du module permettant la mise a jour d'un message utilisateur
+
+exports.updateMessage = async (req, res, next) => {
+  try {
+    const userId = cookies.getUserId(req);
+    const id = req.params.id;
+    let newImageUrl= req.body.imageUrl;
+    const content = req.body.content;
+    const attachment = req.body.attachment;
+    const messageFound = await models.Message.findOne({ where: { id: id } });
+
+    if (userId === messageFound.UserId) {
+      if (req.file) {
+        newImageUrl = `${req.protocol}://${req.get("host")}/images/${
+          req.file.filename
+        }`;
+        if (messageFound.imageUrl) {
+          const filename = messageFound.imageUrl.split("/images")[1];
+          fs.unlink(`images/${filename}`, (err) => {
+            if (err) console.log(err);
+            else {
+              console.log(`Deleted file: images/${filename}`);
+            }
+          });
+        }
+      }
+      const updateMessage = {
+        content: content,
+        attachment: attachment,
+        imageUrl: newImageUrl,
+      };
+      messageFound.update(updateMessage)
+      .then(() => {
+        console.log(updateMessage);
+        res.status(200).json({ message: "Votre message a bien été modifié !" });
+      });
+    } else {
+      res.status(400).json({
+        message:
+          "Vous ne pouvez pas modifier ce message, veuillez contacter votre administrateur !",
+      });
+    }
+  } catch (error) {
+    return res.status(500).send({ error: " Erreur serveur" });
   }
 };
