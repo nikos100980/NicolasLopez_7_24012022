@@ -32,20 +32,20 @@ module.exports = (sequelize, DataTypes) => {
 };
   
   Comment.init({
-    // userId: {
-    //   type: DataTypes.INTEGER,
-    //   references: {
-    //     model: 'Message',
-    //     key: 'id'
-    //   }
-    // },
-    // messageId:{
-    //   type: DataTypes.INTEGER,
-    //   references : {
-    //     model: 'User',
-    //     key: 'id'
-    //   }
-    // },
+     userId: {
+      type: DataTypes.INTEGER,
+       references: {
+         model: 'User',
+         key: 'id'
+       }
+     },
+     messageId:{
+       type: DataTypes.INTEGER,
+       references : {
+         model: 'Message',
+         key: 'id'
+       }
+     },
     comments: DataTypes.STRING
   }, {
     sequelize,

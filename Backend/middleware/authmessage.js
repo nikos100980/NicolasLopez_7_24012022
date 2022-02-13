@@ -7,6 +7,7 @@ function getUserId(req) {
     const decodedToken = JWT.verify(token, process.env.RANDOM_TOKEN_SECRET); // on le vérifie
     const userId = decodedToken.id;
     return userId; // on récupère l'id du token
+   
   };
 
   module.exports.getUserId = getUserId;
