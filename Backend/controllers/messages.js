@@ -13,7 +13,6 @@ exports.createMessage = async (req, res, next) => {
   const attachment = req.body.attachment;
 
   try {
-    
     await models.User.findOne({
       where: { id: userId },
     })
@@ -217,31 +216,31 @@ exports.likeMessage = async (req, res, next) => {
     const userId = cookies.getUserId(req);
     const messageId = req.params.id;
     const userLiked = await models.Like.findOne({
-      where: {UserId: userId, MessageId: messageId },
+      where: { UserId: userId, MessageId: messageId },
     });
     console.log(messageId);
     if (userLiked !== null) {
-      
       await models.Like.destroy(
-        { where: {  UserId:userId, MessageId:messageId } },
+        { where: { UserId: userId, MessageId: messageId } },
         { truncate: true, restartIdentity: true }
       );
-      console.log({UserId:userId,MessageId: messageId });
-      res
-        .status(200)
-        .json({
-          message:
-            "Votre demande de ne plus aimer se message a bien été prise en compte !",
-        });
-    } else {
-     const createLike= await models.Like.create({
-        UserId:userId,
-        MessageId:messageId,
+      console.log({ UserId: userId, MessageId: messageId });
+      res.status(200).json({
+        message:
+          "Votre demande de ne plus aimer se message a bien été prise en compte !",
       });
-      
+    } else {
+      const createLike = await models.Like.create({
+        UserId: userId,
+        MessageId: messageId,
+      });
+
       console.log(createLike);
-      res.status(201).json({ message:createLike,reponse: "Votre like a bien été ajouté !" });}
-      
+      res.status(201).json({
+        message: createLike,
+        reponse: "Votre like a bien été ajouté !",
+      });
+    }
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });
   }
@@ -249,37 +248,33 @@ exports.likeMessage = async (req, res, next) => {
 
 // Ajout du module pour la création d'un commentaire
 
-exports.createComment = async (req, res, next)=>{
+exports.createComment = async (req, res, next) => {
+  try {
+    const messageId = req.params.id;
+    const userId = cookies.getUserId(req);
+    const comment = req.body.commentComment;
+    const firstname = req.body.commentFirstname;
+    const lastname = req.body.commentLastname;
 
-try {
-  const postId= req.params.id;
-  const userId = cookies.getUserId(req);
-  const {comment,firstname,lastname} = req.body;
-  
-  const newComment = {
-    comments : comment,
-    firstname: firstname,
-    lastname: lastname,
-    UserId : userId,
-    PostId : postId,
-  };
-  models.Comment.create(newComment)
-  .then((createComment)=>{
-    res
-  .status(201)
-  .json({ createComment , messageRetour: "votre commentaire est publié" });
-  })
-  
-  .catch((error)=>{
-    res.status(400).json({error: error})
-  })
+    const newComment = {
+      comments: comment,
+      firstname: firstname,
+      lastname: lastname,
+      UserId: userId,
+      MessageId: messageId,
+    };
+    models.Comment.create(newComment)
+      .then((createComment) => {
+        res.status(201).json({
+          createComment,
+          messageRetour: "votre commentaire est publié",
+        });
+      })
 
-
-
-
-
-} catch (error) {
-  return res.status(500).send({ error: "Erreur serveur" });
-}
-
+      .catch((error) => {
+        res.status(400).json({ error: error });
+      });
+  } catch (error) {
+    return res.status(500).send({ error: "Erreur serveur1" });
+  }
 };

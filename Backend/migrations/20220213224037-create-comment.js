@@ -8,26 +8,31 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userId: {
-        allowNull: false,
-        type: Sequelize.INTEGER,
-        references:{
-          model: 'Users',
-          key: 'id'
-        }
-        
-      },
-      messageId: {
+      MessageId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
           model: 'Messages',
           key: 'id'
         }
-        
-       
+      },
+      UserId: {
+        allowNull: false,
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Users',
+          key: 'id'
+        }
       },
       comments: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      firstname: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
+      lastname: {
         allowNull: false,
         type: Sequelize.STRING
       },
