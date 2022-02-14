@@ -8,18 +8,19 @@ const fs = require("fs");
 
 exports.createMessage = async (req, res, next) => {
   const userId = cookies.getUserId(req);
-  let imageUrl;
+  // let imageUrl;
   const content = req.body.content;
   const attachment = req.body.attachment;
 
   try {
+    let imageUrl;
     await models.User.findOne({
       where: { id: userId },
     })
       .then(async (userFound) => {
         if (userFound) {
           if (req.file) {
-            imageUrl = `${req.protocol}://${req.get("host")}/images/${
+            imageUrl = `${req.protocol}://${req.get("host")}/Backend/images/${
               req.file.filename
             }`;
           } else {
@@ -142,7 +143,7 @@ exports.updateMessage = async (req, res, next) => {
 
     if (userId === messageFound.UserId) {
       if (req.file) {
-        newImageUrl = `${req.protocol}://${req.get("host")}/images/${
+        newImageUrl = `${req.protocol}://${req.get("host")}/Backend/images/${
           req.file.filename
         }`;
         if (messageFound.imageUrl) {
@@ -276,5 +277,32 @@ exports.createComment = async (req, res, next) => {
       });
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur1" });
+  }
+};
+
+// Ajout du module pour la suppression d'un message par l'utilisateur qui la créé mais egalement par l'admin
+
+exports.deleteComment = async (req, res, next) => {
+  try {
+    const userId = cookies.getUserId(req);
+    const id = req.params.id;
+    const admin = await models.User.findOne({ where: { id: userId } });
+    const commentFound = await models.Comment.findOne({ where: { id } });
+
+    if (userId === commentFound.UserId || admin.isAdmin === true) {
+      models.Comment.destroy({ where: { id } }, { truncate: true });
+      res
+        .status(200)
+        .json({ message: "Votre commentaire a bien été supprimé !" });
+    } else {
+      res
+        .status(400)
+        .json({
+          message:
+            "Veuillez contacter votre administrateur pour effectuer cette action !",
+        });
+    }
+  } catch (error) {
+    return res.status(500).send({ error: "Erreur serveur" });
   }
 };

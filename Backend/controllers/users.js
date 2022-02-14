@@ -6,20 +6,16 @@ const models = require("../models");
 
 // Importation du module JSONWEBTOKEN pour s'assurer que l'utilisateur est bien le même sur l'ensemble du parcours utilisateur, il sera authentifié sur chaque route
 const jwt = require("jsonwebtoken");
-const fs = require('fs');
+const fs = require("fs");
 
 // Importation du module crypto js afin de l'utiliser dans le cadre des recommandations RGPD pour le masquage des données sensibles ( en l'occurence là l'email)
 const cryptoJs = require("crypto-js");
 
 const maxAge = 3 * 24 * 60 * 1000;
-const createToken = (id,isAdmin)=>{
-  return jwt.sign(
-    { id, isAdmin },
-    `${process.env.RANDOM_TOKEN_SECRET}`,
-    {
-      expiresIn: maxAge,
-    }
-  )
+const createToken = (id, isAdmin) => {
+  return jwt.sign({ id, isAdmin }, `${process.env.RANDOM_TOKEN_SECRET}`, {
+    expiresIn: maxAge,
+  });
 };
 // Le controller permettant la création d'un utilisateur avec le hash du mot de passe afin de sécuriser l'accés et les données confidentielles
 exports.signup = (req, res, next) => {
@@ -52,7 +48,8 @@ exports.signup = (req, res, next) => {
     .then((userFound) => {
       if (!userFound) {
         bcrypt.hash(password, 10, (err, hash) => {
-          const newUser = models.User.create({
+          // const newUser =
+          models.User.create({
             email: emailCrypto,
             password: hash,
             firstname: firstname,
@@ -66,7 +63,7 @@ exports.signup = (req, res, next) => {
               return res.status(201).json({ userId: newUser.id });
             })
 
-            .catch((err) => res.status(500).json({ error }));
+            .catch((err) => res.status(500).json({ error: err }));
         });
       } else {
         return res
@@ -75,11 +72,13 @@ exports.signup = (req, res, next) => {
       }
     })
     .catch((err) =>
-      res.status(500).json({ error: "Utilisateur impossible à verifier !" })
+      res
+        .status(500)
+        .json({ error: err + "Utilisateur impossible à verifier !" })
     );
 };
 
-// Le controller de connection incluant le token afin de lier systematiquement notre utilisateur sur l'ensemble du parcours
+// Ajout du module pour se connecter 
 exports.login = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -101,23 +100,18 @@ exports.login = (req, res, next) => {
         if (!valid) {
           return res.status(401).json({ error: "Mot de passe incorrect !" });
         }
-        const token = createToken(userFound.id,userFound.isAdmin);
-        res.cookie('jwt',token, {httpOnly: true, maxAge});
+        const token = createToken(userFound.id, userFound.isAdmin);
+        res.cookie("jwt", token, { httpOnly: true, maxAge });
         res.status(200).json({
           userId: userFound.id,
-          isAdmin: userFound.isAdmin
-          // token: jwt.sign(
-          //   { userId: userFound.id, isAdmin: userFound.isAdmin },
-          //   `${process.env.RANDOM_TOKEN_SECRET}`,
-          //   {
-          //     expiresIn: "2h",
-          //   }
-          // ),
+          isAdmin: userFound.isAdmin,
         });
       });
     })
     .catch((error) =>
-      res.status(500).json({ error: `impossible de verifier l'utilisateur !` })
+      res
+        .status(500)
+        .json({ error: error + `impossible de verifier l'utilisateur !` })
     );
 };
 // Ajout du module pour récuperer le profil de l'utilisateur
@@ -125,7 +119,7 @@ exports.getProfile = async (req, res) => {
   // on trouve l'utilisateur et on renvoie l'objet user
   try {
     const user = await models.User.findOne({
-      attributes: ['id','firstname','lastname','bio','picture'],
+      attributes: ["id", "firstname", "lastname", "bio", "picture"],
       where: { id: req.params.id },
     });
     res.status(200).send(user);
@@ -134,15 +128,16 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// Ajout du module pour mettre à jour le profil de l'utilisateur 
-exports.updateProfile = async (req,res,next)=>{
-  const {bio , firstname, lastname, picture}= req.body;
- 
+// Ajout du module pour mettre à jour le profil de l'utilisateur
+exports.updateProfile = async (req, res, next) => {
   try {
-    const userFound = await models.User.findOne({ where: {id: req.params.id}});
+    const { bio, firstname, lastname } = req.body;
+    const userFound = await models.User.findOne({
+      where: { id: req.params.id },
+    });
     let newPicture;
-    if(userFound){
-      if(req.file && userFound.picture){
+    if (userFound) {
+      if (req.file && userFound.picture) {
         newPicture = `${req.protocol}://${req.get("host")}/images/${
           req.file.filename
         }`;
@@ -172,7 +167,9 @@ exports.updateProfile = async (req,res,next)=>{
         userFound.lastname = lastname;
       }
 
-      const newUserFound = await userFound.save({ fields: ["lastname","firstname", "bio", "picture"] }); // on sauvegarde les changements dans la bdd
+      const newUserFound = await userFound.save({
+        fields: ["lastname", "firstname", "bio", "picture"],
+      }); // on sauvegarde les changements dans la bdd
       res.status(200).json({
         userFound: newUserFound,
         messageRetour: "Votre profil a bien été modifié",
@@ -182,34 +179,39 @@ exports.updateProfile = async (req,res,next)=>{
         .status(400)
         .json({ messageRetour: "Vous n'avez pas les droits requis" });
     }
-      }catch (error) {
-        return res.status(500).send({ error: "Erreur serveur" });
+  } catch (error) {
+    return res.status(500).send({ error: "Erreur serveur" });
   }
-
 };
 
 // Ajout du module pour supprimer le compte utilisateur
-exports.deleteProfile = async (req,res,next)=>{
+exports.deleteProfile = async (req, res, next) => {
   try {
-    const userFound = await models.User.findOne({ where: {id: req.params.id}});
-    if(userFound.picture !== null){
+    const userFound = await models.User.findOne({
+      where: { id: req.params.id },
+    });
+    if (userFound.picture !== null) {
       const filename = userFound.picture.split("/images")[1];
-        fs.unlink(`images/${filename}`, ()=>{
-          models.User.destroy({where: {id: req.params.id}});
-          res.status(200).json({ message:'Compte supprimé avec sa photo !'});
-        })
-      }else{
-        models.User.destroy({where: {id:req.params.id}},(err,result,fields)=>{
-          if(err){
-            console.log('Erreur deleteprofile'+err);
+      fs.unlink(`images/${filename}`, () => {
+        models.User.destroy({ where: { id: req.params.id } });
+        res.status(200).json({ message: "Compte supprimé avec sa photo !" });
+      });
+    } else {
+      models.User.destroy(
+        { where: { id: req.params.id } },
+        (err, result, fields) => {
+          if (err) {
+            console.log("Erreur deleteprofile" + err);
             return res.status(400).json(err);
           }
-          console.log('Compte supprimé !');
-          return res.status(201).json({ message: req.body.firstname + 'supprimé !' });
-        })}
-    
-    
+          console.log("Compte supprimé !");
+          return res
+            .status(201)
+            .json({ message: req.body.firstname + "supprimé !" });
+        }
+      );
+    }
   } catch (error) {
-    return res.status(500).send({ error : 'Erreur serveur'});
+    return res.status(500).send({ error: "Erreur serveur" });
   }
 };

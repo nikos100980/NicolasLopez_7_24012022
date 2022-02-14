@@ -11,25 +11,20 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      models.User.belongsToMany(models.Message,{
-        through: models.Like,
-        foreignKey: 'userId',
-        otherkey: 'messageId',
-      });
-      models.Message.belongsToMany(models.User,{
-        through: models.Like,
-        foreignKey: 'messageId',
-        otherkey: 'userId',
-      });
+      
       models.Like.belongsTo(models.User,{
         
-        foreignKey: 'userId',
-        as: 'user',
+        foreignKey: {
+          allowNull: false,
+             
+        }, onDelete:'CASCADE',
       });
       models.Like.belongsTo(models.Message,{
         
-        foreignKey: 'messageId',
-        as: 'message',
+        foreignKey: {
+          allowNull: false,
+             
+        }, onDelete:'CASCADE',
       });
     }
   }
@@ -50,7 +45,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     
     },
-    isLike: DataTypes.INTEGER
+    
   }, {
     sequelize,
     modelName: 'Like',

@@ -21,6 +21,7 @@ router.post('/messages/:id/likes',auth,messageCtrl.likeMessage);
 // Creation des routes pour les commentaires
 
 router.post('/messages/:id/comments',auth,messageCtrl.createComment);
+router.delete('/messages/comments/:id',auth,messageCtrl.deleteComment);
 
 
 

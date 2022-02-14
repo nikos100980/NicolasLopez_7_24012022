@@ -10,6 +10,9 @@ const { sequelize } = require('./models/index');
 // Import du dotenv pour les variables d'environnement
 require("dotenv").config();
 
+// importation du module de sécurité pour les en-têtes HTTP afin proteger certaines vulnerabilités de l'API
+const helmet = require("helmet");
+
 // Création de l' apllication EXPRESS
 const app = express();
 
@@ -20,7 +23,7 @@ const messageRoutes = require('./routes/messages');
 
 app.use(express.json());
 // parse application/x-www-form-urlencoded
-
+app.use(helmet({crossOriginResourcePolicy: false}));
 
 app.use(cookieParser());
 
