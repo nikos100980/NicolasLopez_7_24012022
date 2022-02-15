@@ -295,12 +295,10 @@ exports.deleteComment = async (req, res, next) => {
         .status(200)
         .json({ message: "Votre commentaire a bien été supprimé !" });
     } else {
-      res
-        .status(400)
-        .json({
-          message:
-            "Veuillez contacter votre administrateur pour effectuer cette action !",
-        });
+      res.status(400).json({
+        message:
+          "Veuillez contacter votre administrateur pour effectuer cette action !",
+      });
     }
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });

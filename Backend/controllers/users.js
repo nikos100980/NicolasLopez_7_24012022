@@ -23,15 +23,14 @@ exports.signup = (req, res, next) => {
   const firstname = req.body.firstname;
   const lastname = req.body.lastname;
   const password = req.body.password;
-  const picture = req.body.picture;
+
   const bio = req.body.bio;
 
   if (
     email == null ||
     firstname == null ||
     lastname == null ||
-    password == null ||
-    picture == null
+    password == null
   ) {
     return res
       .status(400)
@@ -55,7 +54,7 @@ exports.signup = (req, res, next) => {
             firstname: firstname,
             lastname: lastname,
             bio: bio,
-            picture: picture,
+
             isAdmin: 0,
           })
 
@@ -78,7 +77,7 @@ exports.signup = (req, res, next) => {
     );
 };
 
-// Ajout du module pour se connecter 
+// Ajout du module pour se connecter
 exports.login = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -131,11 +130,14 @@ exports.getProfile = async (req, res) => {
 // Ajout du module pour mettre à jour le profil de l'utilisateur
 exports.updateProfile = async (req, res, next) => {
   try {
-    const { bio, firstname, lastname } = req.body;
+    // const { bio, firstname, lastname } = req.body;
+    const bio = req.body.bio;
+    const firstname = req.body.firstname;
+    const lastname = req.body.lastname;
     const userFound = await models.User.findOne({
       where: { id: req.params.id },
     });
-    let newPicture;
+    let newPicture= req.body.picture;
     if (userFound) {
       if (req.file && userFound.picture) {
         newPicture = `${req.protocol}://${req.get("host")}/images/${
@@ -154,30 +156,32 @@ exports.updateProfile = async (req, res, next) => {
           req.file.filename
         }`;
       }
-      if (newPicture) {
-        userFound.picture = newPicture;
-      }
-      if (bio) {
-        userFound.bio = bio;
-      }
-      if (firstname) {
-        userFound.firstname = firstname;
-      }
-      if (lastname) {
-        userFound.lastname = lastname;
-      }
 
-      const newUserFound = await userFound.save({
-        fields: ["lastname", "firstname", "bio", "picture"],
-      }); // on sauvegarde les changements dans la bdd
-      res.status(200).json({
-        userFound: newUserFound,
-        messageRetour: "Votre profil a bien été modifié",
-      });
+       if(bio || lastname || firstname || newPicture){
+
+        
+         const updateUser = {
+           bio,
+           lastname,
+           firstname,
+           newPicture,
+         };
+         userFound.update(updateUser)
+        
+         .then(()=>{
+           console.log(updateUser);
+           res.status(200).json({ message : 'Votre profil a bien été mise à jour !'})
+
+         })
+         .catch((error)=>{
+           res.status(404).json({ error:`${error}Une erreur est survenue!`})
+         })
+        }
+      
     } else {
       res
         .status(400)
-        .json({ messageRetour: "Vous n'avez pas les droits requis" });
+        .json({ messageRetour: "Veuillez contacter votre administrateur pour effectuer cette action !" });
     }
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });
@@ -190,6 +194,7 @@ exports.deleteProfile = async (req, res, next) => {
     const userFound = await models.User.findOne({
       where: { id: req.params.id },
     });
+
     if (userFound.picture !== null) {
       const filename = userFound.picture.split("/images")[1];
       fs.unlink(`images/${filename}`, () => {
@@ -197,19 +202,11 @@ exports.deleteProfile = async (req, res, next) => {
         res.status(200).json({ message: "Compte supprimé avec sa photo !" });
       });
     } else {
-      models.User.destroy(
+      await models.User.destroy(
         { where: { id: req.params.id } },
-        (err, result, fields) => {
-          if (err) {
-            console.log("Erreur deleteprofile" + err);
-            return res.status(400).json(err);
-          }
-          console.log("Compte supprimé !");
-          return res
-            .status(201)
-            .json({ message: req.body.firstname + "supprimé !" });
-        }
+        { truncate: true }
       );
+      res.status(200).json({ message: "Votre compte a bien été supprimé" });
     }
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });
