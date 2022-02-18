@@ -20,7 +20,7 @@ const normalizePort = val => {
 };
 
 // Le parametrage du port s'effectue par la fonction SET de EXPRESS
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.PORT || '8080');
 app.set('port', port);
 
 

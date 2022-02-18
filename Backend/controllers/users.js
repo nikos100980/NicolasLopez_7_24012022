@@ -140,7 +140,7 @@ exports.updateProfile = async (req, res, next) => {
     let newPicture= req.body.picture;
     if (userFound) {
       if (req.file && userFound.picture) {
-        newPicture = `${req.protocol}://${req.get("host")}/images/${
+        newPicture = `${req.protocol}://${req.get("host")}/Backend/images/${
           req.file.filename
         }`;
         const filename = userFound.picture.split("/images")[1];
@@ -152,7 +152,7 @@ exports.updateProfile = async (req, res, next) => {
           }
         });
       } else if (req.file) {
-        newPicture = `${req.protocol}://${req.get("host")}/images/${
+        newPicture = `${req.protocol}://${req.get("host")}/Backend/images/${
           req.file.filename
         }`;
       }

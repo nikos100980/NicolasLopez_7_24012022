@@ -17,7 +17,7 @@ exports.createMessage = async (req, res, next) => {
     await models.User.findOne({
       where: { id: userId },
     })
-      .then(async (userFound) => {
+      .then( (userFound) => {
         if (userFound) {
           if (req.file) {
             imageUrl = `${req.protocol}://${req.get("host")}/Backend/images/${
@@ -27,7 +27,7 @@ exports.createMessage = async (req, res, next) => {
             imageUrl = null;
           }
 
-          const message = await models.Message.create({
+          const message =  models.Message.create({
             content: content,
             attachment: attachment,
             likes: 0,
@@ -147,7 +147,7 @@ exports.updateMessage = async (req, res, next) => {
           req.file.filename
         }`;
         if (messageFound.imageUrl) {
-          const filename = messageFound.imageUrl.split("/images")[1];
+          const filename = messageFound.imageUrl.split("./images")[1];
           fs.unlink(`images/${filename}`, (err) => {
             if (err) console.log(err);
             else {
