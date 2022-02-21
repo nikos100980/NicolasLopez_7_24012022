@@ -2,6 +2,7 @@
 const express = require("express");
 const path = require('path');
 
+
 const cookieParser = require('cookie-parser');
 
 //db
@@ -15,6 +16,7 @@ const helmet = require("helmet");
 
 // Création de l' apllication EXPRESS
 const app = express();
+
 
 const userRoutes = require("./routes/users");
 const messageRoutes = require('./routes/messages');
@@ -30,7 +32,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 // Configuration des CORS
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", `${process.env.CLIENT_URL}`);
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
@@ -40,7 +42,7 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, PATCH, OPTIONS"
   );
-
+  res.setHeader("Access-Control-Allow-Credentials", "true");
   next();
 });
 app.use("./images", express.static(path.join(__dirname, "./images")));
