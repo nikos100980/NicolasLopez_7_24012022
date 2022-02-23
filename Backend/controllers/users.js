@@ -113,6 +113,13 @@ exports.login = (req, res, next) => {
         .json({ error: error + `impossible de verifier l'utilisateur !` })
     );
 };
+// Ajout du module pour se deconnecter
+exports.logout = (req, res) => {
+  res.clearCookie("jwt");
+  res.status(200).json("OUT");
+};
+
+
 // Ajout du module pour récuperer le profil de l'utilisateur
 exports.getProfile = async (req, res) => {
   // on trouve l'utilisateur et on renvoie l'objet user

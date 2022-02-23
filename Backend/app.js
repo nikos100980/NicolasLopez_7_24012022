@@ -1,12 +1,13 @@
 // Importation du framework EXPRESS pour la creation de l'API
 const express = require("express");
-const path = require('path');
+const path = require("path");
 
+const authCookie = require("./middleware/authCookie");
 
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 
 //db
-const { sequelize } = require('./models/index');
+const { sequelize } = require("./models/index");
 
 // Import du dotenv pour les variables d'environnement
 require("dotenv").config();
@@ -17,15 +18,14 @@ const helmet = require("helmet");
 // Création de l' apllication EXPRESS
 const app = express();
 
-
 const userRoutes = require("./routes/users");
-const messageRoutes = require('./routes/messages');
+const messageRoutes = require("./routes/messages");
 
 // parse application/json
 
 app.use(express.json());
 // parse application/x-www-form-urlencoded
-app.use(helmet({crossOriginResourcePolicy: false}));
+app.use(helmet({ crossOriginResourcePolicy: false }));
 
 app.use(cookieParser());
 
@@ -47,17 +47,23 @@ app.use((req, res, next) => {
 });
 app.use("./images", express.static(path.join(__dirname, "./images")));
 app.use("/api/auth", userRoutes);
-app.use('/api/',messageRoutes);
+app.use("/api/", messageRoutes);
 
+// Création d'une route specifique pour le cookie
+app.get("/jwtid", authCookie, ( req, res) => {
+  
 
-
+    
+    res.status(200).send(res.locals.user);
+  
+});
 
 const dbTest = async function () {
   try {
     await sequelize.authenticate();
-    console.log('Connection has been established successfully.');
+    console.log("Connection has been established successfully.");
   } catch (error) {
-    console.error('Unable to connect to the database:', error);
+    console.error("Unable to connect to the database:", error);
   }
 };
 dbTest();

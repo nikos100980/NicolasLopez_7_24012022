@@ -14,7 +14,7 @@ module.exports = (req, res, next) => {
     if(token){
         jwt.verify(token, process.env.RANDOM_TOKEN_SECRET, async (err, decodedToken)=>{
             if(err){
-                res.locals.user = null;
+                 res.locals.user = null;
                 console.log(err);
                 res.cookie( 'jwt','',{ maxAge: 1});
                 next();

@@ -16,9 +16,12 @@ router.post('/signup',password, userCtrl.signup);
 
 // Creation de la route pour se connecter 
 router.post('/login', userCtrl.login);
+router.get('/logout',userCtrl.logout);
 
+// Création des routes pour la partier du profil
 router.get('/profiles/:id',auth,userCtrl.getProfile);
 router.put('/profiles/:id',auth, multer, userCtrl.updateProfile);
 router.delete('/profiles/:id', auth, multer, userCtrl.deleteProfile);
+
 
 module.exports = router;
