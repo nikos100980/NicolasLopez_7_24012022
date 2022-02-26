@@ -15,6 +15,7 @@ nav {
 
     img {
       width: 250px;
+      
     }
   }
 }
@@ -36,7 +37,7 @@ nav {
   height: 64px;
   color: white;
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   align-items: center;
   position: absolute;
   right: 0;
@@ -44,14 +45,29 @@ nav {
     flex-direction: column;
     height: 200px;
     width: 100%;
+
+   
   }
-  & .items:nth-child(1) {
+  .hello{
+    transform: translateY(2px);
+
+    @media screen and(max-width: 590px) {
+      display: none;
+    }
+  
+  h5{
+    color: #fff;
+    font-size: 1.5rem;
+    margin-right: 60px;
+}
+  }
+   .items:nth-child(1) {
     @media screen and (max-width: 500px) {
       border-top: 1px solid #fff;
       margin-top: 50px;
     }
   }
-  & .items {
+   .items {
     font-size: 18px;
     font-weight: bold;
     margin-right: 40px;

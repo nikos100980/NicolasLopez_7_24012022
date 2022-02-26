@@ -51,18 +51,23 @@
     background-color: darkblue;
     cursor: pointer;
     color: white;
-    padding: 1rem 2rem;
+    padding: 0.9rem 2rem;
+    
+    
     text-transform: uppercase;
     border: none;
   }
   .form-group {
     margin-top: 10px;
+    
   }
 
   input[type="text"],
   input[type="password"],
   input[type="email"] {
     box-sizing: border-box;
+    border: darkblue solid 1px;
+    
     width: 100%;
     padding: 0.5rem 0.7rem;
   }

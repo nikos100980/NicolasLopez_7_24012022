@@ -35,7 +35,6 @@ const LoginForm = () => {
           type="email"
           name="email"
           id="email"
-          placeholder="Email"
           onChange={(e) => setEmail(e.target.value)}
           value={email}
         />
