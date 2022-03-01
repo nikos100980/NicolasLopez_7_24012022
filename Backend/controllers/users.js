@@ -119,7 +119,6 @@ exports.logout = (req, res) => {
   res.status(200).json("OUT");
 };
 
-
 // Ajout du module pour récuperer le profil de l'utilisateur
 exports.getProfile = async (req, res) => {
   // on trouve l'utilisateur et on renvoie l'objet user
@@ -144,14 +143,15 @@ exports.updateProfile = async (req, res, next) => {
     const userFound = await models.User.findOne({
       where: { id: req.params.id },
     });
-    let newPicture= req.body.picture;
+    let newPicture = req.body.picture;
     if (userFound) {
       if (req.file && userFound.picture) {
-        newPicture = `${req.protocol}://${req.get("host")}/Backend/images/${
+        newPicture = `${req.protocol}://${req.get("host")}/images/${
           req.file.filename
         }`;
-        const filename = userFound.picture.split("/images")[1];
-        fs.unlink(`images/${filename}`, (err) => {
+        console.log(userFound.picture);
+        const filename = userFound.picture.split("images")[1];
+        fs.unlink(`./images/${filename}`, (err) => {
           // s'il y avait déjà une photo on la supprime
           if (err) console.log(err);
           else {
@@ -159,36 +159,41 @@ exports.updateProfile = async (req, res, next) => {
           }
         });
       } else if (req.file) {
-        newPicture = `${req.protocol}://${req.get("host")}/Backend/images/${
+        newPicture = `${req.protocol}://${req.get("host")}/images/${
           req.file.filename
         }`;
       }
 
-       if(bio || lastname || firstname || newPicture){
+      if (bio || lastname || firstname || newPicture) {
+userFound.picture = newPicture
 
-        
-         const updateUser = {
-           bio,
-           lastname,
-           firstname,
-           newPicture,
-         };
-         userFound.update(updateUser)
-        
-         .then(()=>{
-           console.log(updateUser);
-           res.status(200).json({ message : 'Votre profil a bien été mise à jour !'})
+        const updateUser = {
+          bio,
+          lastname,
+          firstname,
+          newPicture
+          
+        };
+        await userFound
+          .save(updateUser)
 
-         })
-         .catch((error)=>{
-           res.status(404).json({ error:`${error}Une erreur est survenue!`})
-         })
-        }
-      
+          .then(() => {
+            console.log(updateUser);
+            res
+              .status(200)
+              .json({ message: "Votre profil a bien été mise à jour !" });
+          })
+          .catch((error) => {
+            res.status(404).json({ error: `${error}Une erreur est survenue!` });
+          });
+      }
     } else {
       res
         .status(400)
-        .json({ messageRetour: "Veuillez contacter votre administrateur pour effectuer cette action !" });
+        .json({
+          messageRetour:
+            "Veuillez contacter votre administrateur pour effectuer cette action !",
+        });
     }
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });
@@ -203,7 +208,7 @@ exports.deleteProfile = async (req, res, next) => {
     });
 
     if (userFound.picture !== null) {
-      const filename = userFound.picture.split("/images")[1];
+      const filename = userFound.picture.split("images")[1];
       fs.unlink(`images/${filename}`, () => {
         models.User.destroy({ where: { id: req.params.id } });
         res.status(200).json({ message: "Compte supprimé avec sa photo !" });

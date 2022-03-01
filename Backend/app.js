@@ -20,6 +20,7 @@ const app = express();
 
 const userRoutes = require("./routes/users");
 const messageRoutes = require("./routes/messages");
+const auth = require("./middleware/auth");
 
 // parse application/json
 
@@ -45,11 +46,14 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Credentials", "true");
   next();
 });
-app.use("./images", express.static(path.join(__dirname, "./images")));
+app.use("/images/", express.static(path.join(__dirname, "images")));
 app.use("/api/auth", userRoutes);
 app.use("/api/", messageRoutes);
 
+
+
 // Création d'une route specifique pour le cookie
+ app.get('*', auth);
 app.get("/jwtid", authCookie, ( req, res) => {
   
 
