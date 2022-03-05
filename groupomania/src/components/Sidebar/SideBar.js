@@ -11,7 +11,7 @@ const sideBar = () => {
       <div className="icons">
         <div className="icons-bis">
           <NavLink classeName={(navigationData) => navigationData.isActive ? "active-sidebar": null } to="/" 
- >
+ > 
             <img src={Acceuil} alt="Acceuil" />
           </NavLink>
           <br />

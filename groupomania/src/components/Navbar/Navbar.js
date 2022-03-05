@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import Menu from "../assets/icons/fi-br-menu-burger.svg";
 import Logo from "../assets/icons/icon-left-font-monochrome-white.png";
-import Logout from "../assets/icons/deconnexion-alt.svg";
+
 import RegisterForm from "../Modal/RegisterForm";
 import LoginForm from "../Modal/LoginForm";
 import useModal from "../Modal/Usemodal";
@@ -9,6 +9,7 @@ import Modal from "../Modal/Modal";
 import { NavLink } from "react-router-dom";
 import { UidContext } from "../AppContext";
 import { useSelector } from "react-redux";
+import Logout from "../Modal/Logout";
 
 const Navbar = () => {
   const { isShowing: isLoginFormShowed, toggle: toggleLoginForm } = useModal();
@@ -36,7 +37,7 @@ const Navbar = () => {
   }, []);
 
   const uid = useContext(UidContext);
-  const userData = useSelector((state)=>state.userReducer);
+  const userData = useSelector((state) => state.userReducer);
 
   return (
     <nav>
@@ -46,42 +47,49 @@ const Navbar = () => {
         </div>
       </NavLink>
       {uid ? (
-      <ul className="liste">
-        <li></li>
-        <li className="hello ">
-          <NavLink to="/profil">
-            <h5>Bienvenue, {userData.firstname}</h5>
-          </NavLink>
-        </li>
-        <img src={Logout} alt="logo de deconnexion" />
-      </ul>
-      ) :
-      (toggleMenu || width > 500) && (
-        <><ul className="liste">
-                      <li className="modal-toggle items" onClick={toggleRegistrationForm}>
-                          S'inscrire
-                      </li>
-                      <li className="modal-toggle items" onClick={toggleLoginForm}>
-                          Se connecter
-                      </li>
-                      <Modal
-                          isShowing={isLoginFormShowed}
-                          hide={toggleLoginForm}
-                          title="Se connecter"
-                      >
-                          <LoginForm />
-                      </Modal>
+        <ul className="liste">
+          <li></li>
+          <li className="hello ">
+            <NavLink to="/profil">
+              <h5>Bienvenue, {userData.firstname}</h5>
+            </NavLink>
+          </li>
+          <Logout />
+        </ul>
+      ) : (
+        (toggleMenu || width > 500) && (
+          <>
+            <ul className="liste">
+              <li
+                className="modal-toggle items"
+                onClick={toggleRegistrationForm}
+              >
+                S'inscrire
+              </li>
+              <li className="modal-toggle items" onClick={toggleLoginForm}>
+                Se connecter
+              </li>
+              <Modal
+                isShowing={isLoginFormShowed}
+                hide={toggleLoginForm}
+                title="Se connecter"
+              >
+                <LoginForm />
+              </Modal>
 
-                      <Modal
-                          isShowing={isRegistrationFormShowed}
-                          hide={toggleRegistrationForm}
-                          title="S'inscrire"
-                      >
-                          <RegisterForm />
-                      </Modal>
-                  </ul><button onClick={toggleNav} className="btn">
-                          <img src={Menu} alt="logo-menu" />
-                      </button></>
+              <Modal
+                isShowing={isRegistrationFormShowed}
+                hide={toggleRegistrationForm}
+                title="S'inscrire"
+              >
+                <RegisterForm />
+              </Modal>
+            </ul>
+            <button onClick={toggleNav} className="btn">
+              <img src={Menu} alt="logo-menu" />
+            </button>
+          </>
+        )
       )}
     </nav>
   );

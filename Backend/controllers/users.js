@@ -7,6 +7,7 @@ const models = require("../models");
 // Importation du module JSONWEBTOKEN pour s'assurer que l'utilisateur est bien le même sur l'ensemble du parcours utilisateur, il sera authentifié sur chaque route
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
+const { Op } = require("sequelize");
 
 // Importation du module crypto js afin de l'utiliser dans le cadre des recommandations RGPD pour le masquage des données sensibles ( en l'occurence là l'email)
 const cryptoJs = require("crypto-js");
@@ -117,6 +118,7 @@ exports.login = (req, res, next) => {
 exports.logout = (req, res) => {
   res.clearCookie("jwt");
   res.status(200).json("OUT");
+  
 };
 
 // Ajout du module pour récuperer le profil de l'utilisateur
@@ -124,10 +126,26 @@ exports.getProfile = async (req, res) => {
   // on trouve l'utilisateur et on renvoie l'objet user
   try {
     const user = await models.User.findOne({
-      attributes: ["id", "firstname", "lastname", "bio", "picture"],
+      attributes: ["id", "firstname", "lastname", "bio", "picture","createdAt","updatedAt"],
       where: { id: req.params.id },
     });
     res.status(200).send(user);
+  } catch (error) {
+    return res.status(500).send({ error: "Erreur serveur" });
+  }
+};
+
+exports.getAllProfiles = async (req, res, next) => {
+  try {
+    const users = await models.User.findAll({
+      attributes: [ "id","firstname", "lastname", "picture", "bio"],
+      where: {
+        id: {
+          [Op.ne]: 1,
+        },
+      },
+    });
+    res.status(200).send(users);
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });
   }
@@ -166,6 +184,7 @@ exports.updateProfile = async (req, res, next) => {
 
       if (bio || lastname || firstname || newPicture) {
 userFound.picture = newPicture
+userFound.bio = bio
 
         const updateUser = {
           bio,

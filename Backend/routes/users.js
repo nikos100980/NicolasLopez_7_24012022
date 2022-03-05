@@ -19,6 +19,7 @@ router.post('/login', userCtrl.login);
 router.get('/logout',userCtrl.logout);
 
 // Création des routes pour la partier du profil
+router.get('/',userCtrl.getAllProfiles);
 router.get('/profiles/:id',auth,userCtrl.getProfile);
 router.put('/profiles/:id',auth, multer, userCtrl.updateProfile);
 router.delete('/profiles/:id', auth, multer, userCtrl.deleteProfile);

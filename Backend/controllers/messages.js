@@ -54,12 +54,12 @@ exports.createMessage = async (req, res, next) => {
 exports.getMessages = async (req, res, next) => {
   try {
     await models.Message.findAll({
-      attributes: ["id", "content", "attachment", "likes", "imageUrl"],
+      attributes: ["id", "content", "attachment", "likes", "imageUrl","userId"],
       order: [["id", "DESC"]],
       include: [
         {
           model: models.User,
-          attributes: ["firstname", "lastname", "picture"],
+          attributes: ["firstname", "lastname", "picture","id"],
         },
         {
           model: models.Comment,
