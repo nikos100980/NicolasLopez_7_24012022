@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+
 import { isEmpty } from "../Utils";
 
 const Card = ({ message }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const userData = useSelector((state) => state.userReducer);
+  const [isLoading, setIsLoading] = useState(false);
+
   const users = useSelector((state) => state.usersReducer);
 
   useEffect(() => {

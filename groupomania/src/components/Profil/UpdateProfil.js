@@ -64,7 +64,7 @@ const UpdateProfil = () => {
               </>
             )}
           </div>
-          <h4>Inscrit depuis le : <DayJS format='DD-MM-YYYY' >{userData.createdAt}</DayJS></h4>
+          <h4>Inscrit depuis le : <DayJS format='DD-MMMM-YYYY'  >{userData.createdAt}</DayJS></h4>
         </div>
       </div>
     </div>

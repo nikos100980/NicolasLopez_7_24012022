@@ -23,13 +23,13 @@ const App =  () =>{
           
         })
         .catch((error) => {
-          console.log("Pas de token présent");
+          console.log(error+"Pas de token présent");
         });
       };
       axiosToken();
 
       if(uid) dispatch(getUser(uid));
-  }, [uid]);
+  }, [dispatch, uid]);
 
   return (
     <UidContext.Provider value={uid}>
