@@ -12,13 +12,13 @@ const Modal = ({ isShowing, hide, title, ...props }) =>
               <div className="modal">
                 <div className="modal-header">
                   <h4>{title}</h4>
-                  <button
+                  <div
                     type="button"
                     className="modal-close-button"
                     onClick={hide}
                   >
                     <span>&times;</span>
-                  </button>
+                  </div>
                 </div>
                 <div className="modal-body">{props.children}</div>
               </div>

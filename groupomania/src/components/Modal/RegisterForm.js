@@ -47,6 +47,7 @@ const RegisterForm = () => {
             id="firstname"
             onChange={(e) => setFirstname(e.target.value)}
             value={firstname}
+            className="modal-input"
           />
         </div>
         <div className="form-group">
@@ -57,6 +58,7 @@ const RegisterForm = () => {
             id="lastname"
             onChange={(e) => setLastname(e.target.value)}
             value={lastname}
+            className="modal-input"
           />
         </div>
         <div className="form-group">
@@ -67,6 +69,7 @@ const RegisterForm = () => {
             id="email"
             onChange={(e) => setEmail(e.target.value)}
             value={email}
+            className="modal-input"
           />
         </div>
         <div className="form-group">
@@ -77,6 +80,7 @@ const RegisterForm = () => {
             id="password"
             onChange={(e) => setPassword(e.target.value)}
             value={password}
+            className="modal-input"
           />
         </div>
         <div className="form-group">
@@ -87,10 +91,11 @@ const RegisterForm = () => {
             id="password-control"
             onChange={(e) => setCtrlPassword(e.target.value)}
             value={ctrlPassword}
+            className="modal-input"
           />
         </div>
         <div className="form-group">
-          <input type="submit" value="S'inscrire" />
+          <input type="submit" value="S'inscrire" className="modal-submit"/>
         </div>
       </form>
     </div>

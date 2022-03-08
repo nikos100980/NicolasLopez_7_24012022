@@ -37,6 +37,7 @@ const LoginForm = () => {
           id="email"
           onChange={(e) => setEmail(e.target.value)}
           value={email}
+          className="modal-input"
         />
       </div>
       <div className="form-group">
@@ -47,10 +48,11 @@ const LoginForm = () => {
           id="password"
           onChange={(e) => setPassword(e.target.value)}
           value={password}
+          className="modal-input"
         />
       </div>
       <div className="form-group">
-        <input type="submit" value="Se connecter" />
+        <input type="submit" value="Se connecter" className="modal-submit" />
       </div>
     </form>
   );

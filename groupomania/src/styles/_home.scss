@@ -21,54 +21,7 @@
         margin: 0 auto 12px;
         text-align: center;
         
-        .connection-form {
-          background: darkblue;
-          border-radius: 20px;
-          padding: 20px;
-  
-          ul {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 18px;
-  
-            li {
-              cursor: pointer;
-              border-radius: 20px;
-              padding: 12px 14px;
-              transition: .2s;
-              margin: 0 8px;
-            }
-            .active-btn {
-              background: rgb(129, 129, 214);
-    
-              &:hover {
-                background: orange;
-              }
-            }
-            li:not(.active-btn) {
-              &:hover {
-                transform: translateX(3px)
-              }
-            }
-          }
-          form {
-            input {
-              padding: 10px 14px;
-              margin: 0;
-              font-size: 1.2rem;
-              font-family: $font-1;
-              border-radius: 20px;
-    
-              &:focus {
-                box-shadow: 0 0 3px rgba(51, 51, 51, 0.2);
-              }
-            }
-            input[type=submit] {
-              padding: 14px 14px;
-              border-radius: 20px;
-            }
-          }
-        }
+        
       }
     }
     .right-side {

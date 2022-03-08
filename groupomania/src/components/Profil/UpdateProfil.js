@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { modifyBio } from "../../actions/user.actions";
 import SideBar from "../Sidebar/SideBar";
 import UploadImage from "./UploadImage";
-import DayJS from 'react-dayjs'; 
+
+import { dateParser } from "../Utils";
 
 const UpdateProfil = () => {
   const [bio, setBio] = useState("");
@@ -64,7 +65,7 @@ const UpdateProfil = () => {
               </>
             )}
           </div>
-          <h4>Inscrit depuis le : <DayJS format='DD-MMMM-YYYY'  >{userData.createdAt}</DayJS></h4>
+          <h4>Inscrit depuis le : {dateParser(userData.createdAt)} </h4>
         </div>
       </div>
     </div>

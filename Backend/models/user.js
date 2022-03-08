@@ -11,12 +11,17 @@ module.exports = (sequelize, DataTypes) => {
      
      static associate(models) {
   
-      models.User.hasMany(models.Message);
-      models.User.hasMany(models.Comment);
+      models.User.hasMany(models.Message,
+        {onDelete: 'cascade'});
+
+      models.User.hasMany(models.Comment,{
+        onDelete: 'cascade'
+      })
+        
       
-  
     }
-  }
+    
+  };
   User.init({
     email: DataTypes.STRING,
     picture: DataTypes.STRING,

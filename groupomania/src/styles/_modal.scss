@@ -47,7 +47,7 @@
     border: none;
     background: transparent;
   }
-  input[type="submit"] {
+  .modal-submit {
     background-color: darkblue;
     cursor: pointer;
     color: white;
@@ -62,9 +62,7 @@
     
   }
 
-  input[type="text"],
-  input[type="password"],
-  input[type="email"] {
+  .modal-input{
     box-sizing: border-box;
     border: darkblue solid 1px;
     

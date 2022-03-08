@@ -1,6 +1,7 @@
 // importation des modules necessaires
 
 const models = require("../models");
+
 const cookies = require("../middleware/authmessage");
 const fs = require("fs");
 
@@ -13,30 +14,34 @@ exports.createMessage = async (req, res, next) => {
   const attachment = req.body.attachment;
 
   try {
-    let imageUrl;
+    let imageUrl= req.body.imageUrl;
     await models.User.findOne({
       where: { id: userId },
     })
       .then( (userFound) => {
         if (userFound) {
           if (req.file) {
-            imageUrl = `${req.protocol}://${req.get("host")}/Backend/images/${
+            imageUrl = `${req.protocol}://${req.get("host")}/images/${
               req.file.filename
             }`;
           } else {
             imageUrl = null;
           }
 
-          const message =  models.Message.create({
+          models.Message.create({
             content: content,
             attachment: attachment,
             likes: 0,
+            imageUrl:imageUrl,
             UserId: userFound.id,
-          });
-          res.status(201).json({
-            message: message,
-            reponse: "Votre message a bien été posté !",
-          });
+          })
+          
+            res.status(201).json({
+            
+              reponse: "Votre message a bien été posté !",
+            });
+          
+          
         } else {
           res.status(500).json({ message: "ça bloque" });
         }
@@ -54,25 +59,25 @@ exports.createMessage = async (req, res, next) => {
 exports.getMessages = async (req, res, next) => {
   try {
     await models.Message.findAll({
-      attributes: ["id", "content", "attachment", "likes", "imageUrl","userId"],
+      attributes: ["id", "content", "attachment", "imageUrl","userId","createdAt"],
       order: [["id", "DESC"]],
-      include: [
-        {
-          model: models.User,
-          attributes: ["firstname", "lastname", "picture","id"],
-        },
-        {
+       include: [
+          {
+          model: models.Like,
+            attributes: ["id","userId","messageId"],
+           },
+         {
           model: models.Comment,
-          attributes: ["comments", "UserId", "id"],
-          order: [["id", "DESC"]],
-          include: [
-            {
-              model: models.User,
-              attributes: ["picture", "lastname", "firstname"],
-            },
-          ],
-        },
-      ],
+          attributes: ["comments", "userId", "id"],
+          order: [["id", "DESC"]],}
+      //     include: [
+      //        {
+      //          model: models.User,
+      //          attributes: ["picture", "lastname", "firstname"],
+      //        },
+      //      ],
+      //   },
+       ]
     })
       .then((messages) => {
         if (messages) {
@@ -82,7 +87,7 @@ exports.getMessages = async (req, res, next) => {
         }
       })
       .catch((error) => {
-        res.status(500).json({ error });
+        res.status(400).json({ error });
       });
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });
@@ -103,7 +108,7 @@ exports.getOneMessage = async (req, res, next) => {
         {
           model: models.Comment,
           order: [["id", "DESC"]],
-          attributes: ["comments", "UserId"],
+          attributes: ["comments", "userId"],
           includes: [
             {
               model: models.User,
@@ -119,7 +124,7 @@ exports.getOneMessage = async (req, res, next) => {
         } else {
           res
             .status(404)
-            .json({ error: "Le message selectionné n'a paqs été trouvé !" });
+            .json({ error: "Le message selectionné n'a pas été trouvé !" });
         }
       })
       .catch((error) => {
@@ -143,7 +148,7 @@ exports.updateMessage = async (req, res, next) => {
 
     if (userId === messageFound.UserId) {
       if (req.file) {
-        newImageUrl = `${req.protocol}://${req.get("host")}/Backend/images/${
+        newImageUrl = `${req.protocol}://${req.get("host")}/images/${
           req.file.filename
         }`;
         if (messageFound.imageUrl) {
@@ -217,33 +222,60 @@ exports.likeMessage = async (req, res, next) => {
     const userId = cookies.getUserId(req);
     const messageId = req.params.id;
     const userLiked = await models.Like.findOne({
-      where: { UserId: userId, MessageId: messageId },
+      where: { userId:userId, messageId },
     });
-    console.log(messageId);
+    
     if (userLiked !== null) {
       await models.Like.destroy(
-        { where: { UserId: userId, MessageId: messageId } },
+        { where: { userId:userId, messageId } },
         { truncate: true, restartIdentity: true }
       );
-      console.log({ UserId: userId, MessageId: messageId });
+      console.log({ userId, messageId });
       res.status(200).json({
         message:
           "Votre demande de ne plus aimer se message a bien été prise en compte !",
       });
     } else {
-      const createLike = await models.Like.create({
-        UserId: userId,
-        MessageId: messageId,
-      });
+        await models.Like.create({
+        userId:userId,
+        messageId,
+      })
+      .then(()=>{
+        console.log(userId);
+        res.status(201).json({
+         
+          reponse: "Votre like a bien été ajouté !",
+        });
+      })
+      .catch((error)=>res.status(500).json({error}))
 
-      console.log(createLike);
-      res.status(201).json({
-        message: createLike,
-        reponse: "Votre like a bien été ajouté !",
-      });
+     
     }
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });
+  }
+};
+
+// Ajout du module pour le compatge des likes
+
+exports.likeCounter = async (req, res, next) => {
+  try{
+    await models.Like.findAll({
+      attributes: ["id", "userId","messageId"],
+    })
+    .then((userLikes)=>{
+      if(userLikes){
+        res.status(200).json(userLikes)
+
+      }else{
+        res.status(404).json({error: "aucun like présent"})
+      }
+    })
+    .catch((error)=>{
+      res.status(400).json({error})
+    });
+  }catch(error){
+    return res.status(500).send({error: "Erreur serveur"});
   }
 };
 
@@ -251,8 +283,8 @@ exports.likeMessage = async (req, res, next) => {
 
 exports.createComment = async (req, res, next) => {
   try {
-    const messageId = req.params.id;
-    const userId = cookies.getUserId(req);
+     const messageId = req.params.id;
+     const userId = cookies.getUserId(req);
     const comment = req.body.commentComment;
     const firstname = req.body.commentFirstname;
     const lastname = req.body.commentLastname;
@@ -261,8 +293,8 @@ exports.createComment = async (req, res, next) => {
       comments: comment,
       firstname: firstname,
       lastname: lastname,
-      UserId: userId,
-      MessageId: messageId,
+      userId: userId,
+       messageId: messageId,
     };
     models.Comment.create(newComment)
       .then((createComment) => {

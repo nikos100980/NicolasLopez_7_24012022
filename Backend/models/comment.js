@@ -12,40 +12,34 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       
-      models.Comment.belongsTo(models.User,{
-        
-        foreignKey: {
-          allowNull: false,
-             
-        }, onDelete:'CASCADE',
-      });
-      models.Comment.belongsTo(models.Message,{
-        
-        foreignKey: {
-          allowNull: false,
-             
-        }, onDelete:'CASCADE',
-      });
-    }
-  }
+       
+        models.User.belongsToMany(models.Message, {
+          through: models.Comment,
+          foreignKey: 'userId',
+          otherKey: 'messageId',
+        });
+    
+        models.Message.belongsToMany(models.User, {
+          through: models.Comment,
+          foreignKey: 'messageId',
+          otherKey: 'userId',
+        });
+    
+        models.Comment.belongsTo(models.User, {
+          foreignKey: 'userId',
+          as: 'user',
+        });
+    
+        models.Comment.belongsTo(models.Message, {
+          foreignKey: 'messageId',
+          as: 'message',
+        });
+      }
+    };
   Comment.init({
-    MessageId: {
-      type: DataTypes.INTEGER,
-      references:{
-        model: 'Message',
-        key: 'id',
-      }
-    },
-    UserId: {
-      type: DataTypes.INTEGER,
-      references:{
-        model: 'User',
-        key: 'id',
-      }
-    },
-    comments: DataTypes.STRING,
-    firstname: DataTypes.STRING,
-    lastname: DataTypes.STRING
+    messageId: DataTypes.INTEGER,
+    userId: DataTypes.INTEGER,
+    comments: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Comment',

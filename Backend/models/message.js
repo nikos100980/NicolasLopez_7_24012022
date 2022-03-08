@@ -14,16 +14,13 @@ module.exports = (sequelize, DataTypes) => {
           allowNull: false,
         },
       }),
-      models.Message.hasMany(models.Comment )
-      
-      
-        
-      
-      
-    };
+        models.Message.hasMany(models.Comment, { onDelete: "cascade" });
+        models.Message.hasMany(models.Like, { onDelete: "cascade" });
+    }
   }
   Message.init(
     {
+      userId: DataTypes.INTEGER,
       content: DataTypes.STRING,
       attachment: DataTypes.STRING,
       imageUrl: DataTypes.STRING,
