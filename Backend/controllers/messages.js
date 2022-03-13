@@ -222,22 +222,26 @@ exports.likeMessage = async (req, res, next) => {
     const userId = cookies.getUserId(req);
     const messageId = req.params.id;
     const userLiked = await models.Like.findOne({
-      where: { userId:userId, messageId },
+      where: { userId, messageId },
     });
     
     if (userLiked !== null) {
       await models.Like.destroy(
-        { where: { userId:userId, messageId } },
+        { where: {userId, messageId } },
         { truncate: true, restartIdentity: true }
       );
-      console.log({ userId, messageId });
-      res.status(200).json({
-        message:
-          "Votre demande de ne plus aimer se message a bien été prise en compte !",
-      });
+      
+        console.log({ userId, messageId });
+        res.status(200).json({
+          message:
+            "Votre demande de ne plus aimer se message a bien été prise en compte !",
+        }); 
+      
+      
+      
     } else {
         await models.Like.create({
-        userId:userId,
+        userId,
         messageId,
       })
       .then(()=>{

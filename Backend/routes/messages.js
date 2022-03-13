@@ -17,7 +17,7 @@ router.delete('/messages/:id',auth,multer,messageCtrl.deleteMessage);
 // Creation de la route pour le like
 
 router.post('/messages/:id/likes',auth,messageCtrl.likeMessage);
-router.get ('/likes',messageCtrl.likeCounter)
+router.get ('/likes/:id',messageCtrl.likeCounter)
 
 // Creation des routes pour les commentaires
 
