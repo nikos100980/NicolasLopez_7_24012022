@@ -68,7 +68,7 @@ exports.getMessages = async (req, res, next) => {
            },
          {
           model: models.Comment,
-          attributes: ["comments", "userId", "id"],
+          attributes: ["content", "userId", "id"],
           order: [["id", "DESC"]],}
       //     include: [
       //        {
@@ -177,7 +177,7 @@ exports.updateMessage = async (req, res, next) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({ error: " Erreur serveur" });
+    return res.status(500).send({ error: " Erreur serveur1" });
   }
 };
 
@@ -283,8 +283,30 @@ exports.likeCounter = async (req, res, next) => {
   }
 };
 
+// Ajout du module pour la récupération des commentaires attenant au message
+exports.getComments = async (req, res, next) => {
+  try {
+    await models.Comment.findAll({
+      where: { messageId: req.params.id },
+      // attributes: ["id", "comments","userId","createdAt"],
+      // order: [["id", "DESC"]],
+       
+    })
+      .then((messages) => {
+        if (messages) {
+          res.status(200).json(messages);
+        } else {
+          res.status(404).json({ error: "aucun message trouvé" });
+        }
+      })
+      .catch((error) => {
+        res.status(400).json({ error });
+      });
+  } catch (error) {
+    return res.status(500).send({ error: "Erreur serveur" });
+  }
+};
 // Ajout du module pour la création d'un commentaire
-
 exports.createComment = async (req, res, next) => {
   try {
      const messageId = req.params.id;

@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from "react";
-import Menu from "../assets/icons/fi-br-menu-burger.svg";
-import Logo from "../assets/icons/icon-left-font-monochrome-white.png";
+import React, { useContext } from "react";
+
+import Logo from "../assets/icons/icon-left-font-monochrome-black.png";
 
 import RegisterForm from "../Modal/RegisterForm";
 import LoginForm from "../Modal/LoginForm";
@@ -18,79 +18,54 @@ const Navbar = () => {
     toggle: toggleRegistrationForm,
   } = useModal();
 
-  const [toggleMenu, setToggleMenu] = useState(false);
-  const [width, setWidth] = useState(window.innerWidth);
-
-  const toggleNav = () => {
-    setToggleMenu(!toggleMenu);
-  };
-
-  useEffect(() => {
-    const changeWidth = () => {
-      setWidth(window.innerWidth);
-    };
-    window.addEventListener("resize", changeWidth);
-
-    return () => {
-      window.removeEventListener("resize", changeWidth);
-    };
-  }, []);
-
   const uid = useContext(UidContext);
   const userData = useSelector((state) => state.userReducer);
 
   return (
     <nav>
-      <NavLink to="/">
-        <div className="logo">
-          <img src={Logo} alt="logo groupomania" />
-        </div>
-      </NavLink>
-      {uid ? (
-        <ul className="liste">
-          <li></li>
-          <li className="hello ">
-            <NavLink to="/profil">
-              <h5>Bienvenue, {userData.firstname}</h5>
-            </NavLink>
-          </li>
-          <Logout />
-        </ul>
-      ) : (
-        (toggleMenu || width > 500) && (
-          <>
-            <ul className="liste">
-              <li
-                className="modal-toggle items"
-                onClick={toggleRegistrationForm}
-              >
-                S'inscrire
-              </li>
-              <li className="modal-toggle items" onClick={toggleLoginForm}>
-                Se connecter
-              </li>
-              <Modal
-                isShowing={isLoginFormShowed}
-                hide={toggleLoginForm}
-                title="Se connecter"
-              >
-                <LoginForm />
-              </Modal>
+      <div className="nav-container">
+        <NavLink to="/">
+          <div className="logo">
+            <img src={Logo} alt="logo groupomania" />
+          </div>
+        </NavLink>
 
-              <Modal
-                isShowing={isRegistrationFormShowed}
-                hide={toggleRegistrationForm}
-                title="S'inscrire"
-              >
-                <RegisterForm />
-              </Modal>
-            </ul>
-            <button onClick={toggleNav} className="btn">
-              <img src={Menu} alt="logo-menu" />
-            </button>
-          </>
-        )
-      )}
+        {uid ? (
+          <ul className="liste">
+            <li></li>
+            <li className="hello ">
+              <NavLink to="/profil">
+                <h5>Bienvenue, {userData.firstname}</h5>
+              </NavLink>
+            </li>
+            <Logout />
+          </ul>
+        ) : (
+          <ul className="liste">
+            <li className="modal-toggle items" onClick={toggleRegistrationForm}>
+              S'inscrire
+            </li>
+            <li className="modal-toggle items" onClick={toggleLoginForm}>
+              Se connecter
+            </li>
+            <Modal
+              isShowing={isLoginFormShowed}
+              hide={toggleLoginForm}
+              title="Se connecter"
+            >
+              <LoginForm />
+            </Modal>
+
+            <Modal
+              isShowing={isRegistrationFormShowed}
+              hide={toggleRegistrationForm}
+              title="S'inscrire"
+            >
+              <RegisterForm />
+            </Modal>
+          </ul>
+        )}
+      </div>
     </nav>
   );
 };

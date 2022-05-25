@@ -20,8 +20,8 @@ router.post('/messages/:id/likes',auth,messageCtrl.likeMessage);
 router.get ('/likes/:id',messageCtrl.likeCounter)
 
 // Creation des routes pour les commentaires
-
-router.post('/messages/:id/comments',auth,messageCtrl.createComment);
+router.get('/messages/:id/comments',auth,messageCtrl.getComments);
+router.post('/messages/comments',auth,messageCtrl.createComment);
 router.delete('/messages/comments/:id',auth,messageCtrl.deleteComment);
 
 

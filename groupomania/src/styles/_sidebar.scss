@@ -63,7 +63,7 @@
           bottom: 8px;
           border-radius: 40px;
           transform: scaleY(0);
-          animation: scale 1.5s ease forwards;
+          animation: scaleY(1.5s) ease forwards;
 
           @keyframes scale {
             to {

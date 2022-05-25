@@ -1,96 +1,84 @@
 nav {
   position: fixed;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  top: 0;
   width: 100%;
-  height: 64px;
-  background-color: darkblue;
-  z-index: 1000;
+  height: 45px;
+  border-radius: 6px;
+  box-shadow: 18px 1px 0px $color-1, 22px 4px 0px 0px $shadow;
+  z-index: 10;
+  top: 0;
 
-  .logo {
-    position: relative;
-    
+  @media screen and(max-width: 1251px) {
+    padding: 0 20px;
+  }
+
+  &::after {
+    content: "";
+    height: 45px;
+    width: 110%;
+    left: -20px;
+    top:0;
+    position: absolute;
+    backdrop-filter: blur(3px);
+    background: rgba(255, 255, 255, 0.86);
+    z-index: -8;
+  }
+
+  .nav-container {
     display: flex;
-    align-items: center;
-    height: 64px;
-
-    img {
-      width: 10%;
-      height: 64px;
-      position: fixed;
-      object-fit: cover;
-      
-      
-    }
-  }
-}
-
-.btn > img {
-  display: none;
-  position: absolute;
-  right: 10px;
-  top: 13px;
-  cursor: pointer;
-  width: 35px;
-  @media screen and (max-width: 500px) {
-    display: block;
-  }
-}
-.liste {
-  list-style-type: none;
-  background-color: darkblue;
-  height: 64px;
-  color: white;
-  display: flex;
-  width: 15%;
-  
-  justify-content: space-evenly;
-  align-items: center;
-  position: absolute;
-  right: 0;
-  
-  @media screen and (max-width: 500px) {
-    flex-direction: column;
-    height: 200px;
     width: 100%;
-
-   
-  }
-  .hello{
-    transform: translateY(2px);
-    justify-items: center;
-
-    @media screen and(max-width: 590px) {
-      display: none;
-    }
-  
-  h5{
-    color: #fff;
-    font-size: 1.5rem;
+    max-width: 1800px;
+    margin: 0 auto;
+    justify-content: space-between;
+    height: 45px;
+    align-items: center;
     
-}
-  }
-   .items:nth-child(1) {
-    @media screen and (max-width: 500px) {
-      border-top: 1px solid #fff;
-      margin-top: 50px;
-    }
-  }
-   .items {
-    font-size: 18px;
-    font-weight: bold;
-    margin-right: 40px;
-    cursor: pointer;
-    @media screen and (max-width: 500px) {
-      height: 50px;
-      margin-right: 0px;
-      width: 100%;
-      border-bottom: 1px solid #fff;
-      line-height: 50px;
-      text-align: center;
+    .logo {
+      display: flex;
+      align-items: center;
       
+      h3 {
+        transform: translate(15px, 2px);
+        font-size: 1.5rem;
+        font-family: $font-1;
+      }
+      img {
+        width: 200px;
+      }
+    }
+    
+    ul {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 35%;
+      justify-content: space-between;
+      font-size: 1.2rem;
+      cursor: pointer;
+      
+      .welcome {
+        transform: translateY(2px);
+
+        @media screen and(max-width: 590px) {
+          display: none;
+        }
+        
+        h5 {
+          font-family: $font-1;
+        }
+      }
+      
+      li {
+        
+        img {
+          height: 24px;
+          width: 24px;
+          cursor: pointer;
+          display: grid;
+          align-items: center;
+          justify-items: center;
+          height: 100%;
+        }
+      }
     }
   }
 }

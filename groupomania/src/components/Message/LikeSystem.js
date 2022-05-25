@@ -23,17 +23,23 @@ const LikeSystem = ({ message }) => {
   useEffect(() => {
     if (message.Likes.includes(uid)) setLiked(true);
     else setLiked(false);
-  }, [uid, message.Likes, liked]);
+  }, [uid, message.Likes]);
 
   return (
-    <div className="like-container">
-      {uid && liked === false && (
+    <>
+    
+      { liked === false && (<button className="like-container">
         <img src={Love} alt="logo like" onClick={onLikes} />
+        <span>{message.Likes.length}</span>
+        </button>
       )}
-      {uid && liked && <img src={iLove} alt="logo like" onClick={unLikes} />}
+      {liked && (<button className="like-container">
+         <img src={iLove} alt="logo like" onClick={unLikes} />
 
       <span>{message.Likes.length}</span>
-    </div>
+    </button>
+)}
+    </>
   );
 };
 

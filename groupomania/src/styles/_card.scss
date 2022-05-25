@@ -147,14 +147,41 @@
       margin-top: 12px;
       box-shadow: 0 0 3px rgba(51, 51, 51, 0.342);
     }
-    
-    .card-footer {
+    iframe {
+      width: 100%;
+      min-height: 330px;
+      border-radius: 6px;
+      box-shadow: 0 0 3px rgba(51, 51, 51, 0.342);
+    }
+    .button-container {
+      justify-content: flex-end;
+      display: flex;
 
+      div {
+        padding: 5px 9px;
+        margin-left: 5px;
+        background: $color-2;
+        border-radius: 50px;
+        transition: 0.1s;
+        cursor: pointer;
+
+        &:hover {
+          transform: scale(1.07);
+        }
+
+        img {
+          height: 16px;
+          width: 16px;
+          transform: translateY(3px);
+        }
+      }
+    }
+    .card-footer {
       display: flex;
       align-items: center;
+      justify-content: center;
       justify-content: space-between;
       padding: 12px 0 4px;
-      width: 100%;
 
       img {
         height: 22px;
@@ -177,7 +204,6 @@
           transform: translate(29px, 2px);
         }
       }
-
     }
     .comment-container.client {
       background: $color-4;

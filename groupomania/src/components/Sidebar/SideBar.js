@@ -10,21 +10,19 @@ const sideBar = () => {
     <div className="sidebar-container">
       <div className="icons">
         <div className="icons-bis">
-          <NavLink classeName={(navigationData) => navigationData.isActive ? "active-sidebar": null } to="/" 
+          <NavLink  className={(navData) => navData.isActive ?"active-sidebar" : ""} to='/'
  > 
             <img src={Acceuil} alt="Acceuil" />
           </NavLink>
           <br />
           <NavLink
-            to="/profil"
-             classeName={(isActive) => isActive ? "active-sidebar": null }
+            className={(navData) => navData.isActive ?"active-sidebar" : ""} to='/profil'
           >
             <img src={User} alt="profil edition" />
           </NavLink>
           <br />
           <NavLink
-            to="/trending"
-            className={(navData) => navData.isActive ? "active-sidebar" : "" }
+            className={(navData) => navData.isActive ?"active-sidebar" : ""} to='/trending'
           >
             <img src={Top} alt="commentaires les plus likés" />
           </NavLink>
