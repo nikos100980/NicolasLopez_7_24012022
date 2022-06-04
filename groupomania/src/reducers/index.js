@@ -3,10 +3,8 @@ import userReducer from "./user.reducer";
 import messageReducer from "./messages.reducer";
 import usersReducer from "./users.reducer";
 
-
-export default combineReducers ({
-    userReducer,
-    usersReducer,
-    messageReducer,
-    
-});  
+export default combineReducers({
+  userReducer,
+  usersReducer,
+  messageReducer,
+});

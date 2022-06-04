@@ -33,20 +33,22 @@ export default function messageReducer(state = initialState, action) {
       return state.filter((message) => message.id !== action.payload.messageId);
     case POST_LIKES:
       return state.map((message) => {
-        if (message.messageId === action.payload.messageId) {
+        if (message.id === action.payload.messageId) {
           return {
             ...message,
             Likes: [action.payload.userId, ...message.Likes],
+            
           };
         }
         return message;
       });
     case POST_UNLIKES:
       return state.map((message) => {
-        if (message.messageId === action.payload.messageId) {
+        if (message.id === action.payload.messageId) {
           return {
             ...message,
-            Likes: message.Likes.filter((id) => id !== action.payload.userId),
+            Likes: message.Likes.filter((id) => id !== action.payload.userId),  ...message.Likes,
+            
           };
         }
         return message;
@@ -63,7 +65,7 @@ export default function messageReducer(state = initialState, action) {
 
     case ADD_COMMENTS:
       return state.map((message) => {
-        if (message.id === action.payload.amessageId) {
+        if (message.id === action.payload.messageId) {
           return {
             ...message,
             comments: action.payload.comments,

@@ -20,11 +20,11 @@ const Logout = () => {
       .catch((error) => {
         console.log(error);
       });
-      window.location = '/';
+    window.location = "/";
   };
 
   return (
-    <li onClick={logout} className='hello'>
+    <li onClick={logout} className="hello">
       <img src={Deco} alt="logo de deconnexion" />
     </li>
   );

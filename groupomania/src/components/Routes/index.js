@@ -8,12 +8,12 @@ import Navbar from "../Navbar/Navbar";
 const index = () => {
   return (
     <BrowserRouter>
-    <Navbar />
+      <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/profil" element={<Profil />} />
         <Route path="/trending" element={<Trending />} />
-        <Route path = "*" element={<Navigate replace to="/"/>} />
+        <Route path="*" element={<Navigate replace to="/" />} />
       </Routes>
     </BrowserRouter>
   );

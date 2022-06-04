@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import axios from "axios";
 
@@ -7,33 +6,33 @@ const RegisterForm = () => {
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [ctrlPassword, setCtrlPassword]= useState('');
+  const [ctrlPassword, setCtrlPassword] = useState("");
 
   const handleRegister = async (e) => {
-      e.preventDefault();
+    e.preventDefault();
 
-      if(password !== ctrlPassword){
-          window.alert ('Merci de verifier les mots de passe !');
-      }else{
-          await axios({
-              method: 'post',
-              url:`${process.env.REACT_APP_API_URL}api/auth/signup`,
-              withCredentials: true,
-              data: {
-                  firstname,
-                  lastname,
-                  email,
-                  password
-              }
-          }).then((res) => {
-            console.log(res);
-            window.location = "/";
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
-
+    if (password !== ctrlPassword) {
+      window.alert("Merci de verifier les mots de passe !");
+    } else {
+      await axios({
+        method: "post",
+        url: `${process.env.REACT_APP_API_URL}api/auth/signup`,
+        withCredentials: true,
+        data: {
+          firstname,
+          lastname,
+          email,
+          password,
+        },
+      })
+        .then((res) => {
+          console.log(res);
+          window.location = "/";
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   return (
@@ -95,7 +94,7 @@ const RegisterForm = () => {
           />
         </div>
         <div className="form-group">
-          <input type="submit" value="S'inscrire" className="modal-submit"/>
+          <input type="submit" value="S'inscrire" className="modal-submit" />
         </div>
       </form>
     </div>

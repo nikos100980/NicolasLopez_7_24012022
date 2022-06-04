@@ -2,7 +2,6 @@ import React from "react";
 import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
 
-
 const Modal = ({ isShowing, hide, title, ...props }) =>
   isShowing
     ? ReactDOM.createPortal(
@@ -28,9 +27,9 @@ const Modal = ({ isShowing, hide, title, ...props }) =>
         document.body
       )
     : null;
-    Modal.propTypes = {
-        isShowing: PropTypes.bool.isRequired,
-        hide: PropTypes.func.isRequired,
-        title: PropTypes.string.isRequired
-      };
+Modal.propTypes = {
+  isShowing: PropTypes.bool.isRequired,
+  hide: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+};
 export default Modal;

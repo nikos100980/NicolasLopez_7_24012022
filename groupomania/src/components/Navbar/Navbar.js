@@ -32,7 +32,6 @@ const Navbar = () => {
 
         {uid ? (
           <ul className="liste">
-            <li></li>
             <li className="hello ">
               <NavLink to="/profil">
                 <h5>Bienvenue, {userData.firstname}</h5>

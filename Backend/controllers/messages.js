@@ -221,13 +221,14 @@ exports.likeMessage = async (req, res, next) => {
   try {
     const userId = cookies.getUserId(req);
     const messageId = req.params.id;
+    const likevalue = req.body.likevalue;
     const userLiked = await models.Like.findOne({
-      where: { userId, messageId },
+      where: { userId, messageId},
     });
     
     if (userLiked !== null) {
       await models.Like.destroy(
-        { where: {userId, messageId } },
+        { where: {userId, messageId} },
         { truncate: true, restartIdentity: true }
       );
       
@@ -243,6 +244,7 @@ exports.likeMessage = async (req, res, next) => {
         await models.Like.create({
         userId,
         messageId,
+        likevalue ,
       })
       .then(()=>{
         console.log(userId);
@@ -311,16 +313,16 @@ exports.createComment = async (req, res, next) => {
   try {
      const messageId = req.params.id;
      const userId = cookies.getUserId(req);
-    const comment = req.body.commentComment;
-    const firstname = req.body.commentFirstname;
-    const lastname = req.body.commentLastname;
+    const comment = req.body.content;
+    const firstname = req.body.firstname;
+    const lastname = req.body.lastname;
 
     const newComment = {
-      comments: comment,
+      content: comment,
       firstname: firstname,
       lastname: lastname,
       userId: userId,
-       messageId: messageId,
+      messageId: messageId,
     };
     models.Comment.create(newComment)
       .then((createComment) => {
@@ -359,6 +361,6 @@ exports.deleteComment = async (req, res, next) => {
       });
     }
   } catch (error) {
-    return res.status(500).send({ error: "Erreur serveur" });
+    return res.status(500).send({ error: "Erreur serveur3" });
   }
 };

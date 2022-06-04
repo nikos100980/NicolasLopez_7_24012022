@@ -17,17 +17,16 @@ dayjs.extend(relativeTime);
 const Card = ({ message }) => {
   const [isUpdated, setIsUpdated] = useState(false);
   const [textUpdate, setTextUpdate] = useState(null);
-  const [showComment, setShowComment] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const dispatch = useDispatch();
   const users = useSelector((state) => state.usersReducer);
   const user = useSelector((state) => state.userReducer);
 
   useEffect(() => {
-    if (showComment) {
+    if (showComments) {
       dispatch(getComments(message.id));
     }
-  }, [showComment, message.id, dispatch]);
-  
+  }, [showComments, message.id, dispatch]);
 
   const updateItem = () => {
     if (textUpdate) {
@@ -37,13 +36,11 @@ const Card = ({ message }) => {
   };
 
   return (
-    <li className="card-container" key={message.id}>
+    <li className="card-container" >
       <div className="card-left">
         {users.map((user) => {
           if (user.id === message.userId && user.picture) {
-            return (
-               <img src="" alt="user" key={"id" + message.id} />
-            );
+            return <img src={user.picture} alt="user" />;
           } else if (user.id === message.userId && !user.picture) {
             return null;
           } else {
@@ -86,7 +83,6 @@ const Card = ({ message }) => {
             src={message.imageUrl}
             alt="illustration du message"
             className="card-pic"
-            key={"messageImage" + user.id}
           />
         )}
         {(user.isAdmin || user.id === message.userId) && (
@@ -100,21 +96,22 @@ const Card = ({ message }) => {
         <div className="card-footer">
           <div className="comment-icon">
             <img
-              onClick={() => setShowComment(!showComment)}
+              onClick={() => setShowComments(!showComments)}
               src={Bulle}
               alt="logo des commentaires"
             />
             <span>Votre commentaire</span>
           </div>
+          <LikeSystem message={message} />
         </div>
-        {showComment && (
+        {showComments && (
           <CardComments
-            comments={message.comments}
+            comments={message.Comments}
             messageId={message.id}
             userId={user.id}
           />
         )}
-        <LikeSystem message={message} />
+        
       </div>
     </li>
   );

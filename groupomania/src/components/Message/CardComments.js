@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addComment, getComments } from "../../actions/comments.actions";
-import { dateParser } from "../Utils";
+
 import DeleteComment from "./DeleteComment";
+import dayjs from "dayjs";
+require("dayjs/locale/fr");
+let relativeTime = require("dayjs/plugin/relativeTime");
+dayjs.extend(relativeTime);
 
 const CardComments = ({ comments, messageId, userId }) => {
   const [content, setContent] = useState("");
-  const [loadComment, setLoadComment] = useState(true);
+  const [loadComment, setLoadComment] = useState(false);
   const users = useSelector((state) => state.usersReducer);
   const user = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
@@ -22,10 +26,10 @@ const CardComments = ({ comments, messageId, userId }) => {
   };
 
   useEffect(() => {
-    if (loadComment) dispatch(getComments()).then(() => setLoadComment(false));
+    if (loadComment) dispatch(getComments()).then(() => setLoadComment(true));
   }, [dispatch, loadComment]);
 
-//   console.log(user.isAdmin);
+  //   console.log(user.isAdmin);
 
   return (
     <div className="comments-container">
@@ -38,15 +42,15 @@ const CardComments = ({ comments, messageId, userId }) => {
               <div className="comment-container">
                 <div className="left-part">
                   {users.map((user) => {
-                    if (user.id === comment.userId && user.imageUrl) {
+                    if (user.id === comment.userId && user.picture) {
                       return (
                         <img
-                          src={user.imageUrl}
+                          src={user.picture}
                           alt="user"
-                          key={"id" + comment.id}
+                           key={"id" + comment.id}
                         />
                       );
-                    } else if (user.id === comment.userId && !user.imageUrl) {
+                    } else if (user.id === comment.userId && !user.picture) {
                       return null;
                     } else {
                       return null;
@@ -58,13 +62,19 @@ const CardComments = ({ comments, messageId, userId }) => {
                     <div className="pseudo">
                       {users.map((user) => {
                         if (user.id === comment.userId && user.firstname) {
-                          return <h3>{user.firstname}</h3>;
+                          return (
+                            <h3>
+                              {user.firstname} {user.lastname}
+                            </h3>
+                          );
                         } else {
                           return null;
                         }
                       })}
                     </div>
-                    <span>{dateParser(comment.createdAt)}</span>
+                    <span>
+                      {dayjs().locale("fr").to(dayjs(comment.createdAt))}
+                    </span>
                   </div>
                   <p>{comment.content}</p>
                 </div>

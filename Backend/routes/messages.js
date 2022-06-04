@@ -17,11 +17,12 @@ router.delete('/messages/:id',auth,multer,messageCtrl.deleteMessage);
 // Creation de la route pour le like
 
 router.post('/messages/:id/likes',auth,messageCtrl.likeMessage);
+router.post("/messages/:id/dislikes", auth,messageCtrl.likeMessage );
 router.get ('/likes/:id',messageCtrl.likeCounter)
 
 // Creation des routes pour les commentaires
 router.get('/messages/:id/comments',auth,messageCtrl.getComments);
-router.post('/messages/comments',auth,messageCtrl.createComment);
+router.post('/messages/comments/:id',auth,messageCtrl.createComment);
 router.delete('/messages/comments/:id',auth,messageCtrl.deleteComment);
 
 

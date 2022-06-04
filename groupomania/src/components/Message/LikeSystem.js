@@ -11,35 +11,31 @@ const LikeSystem = ({ message }) => {
   const uid = useContext(UidContext);
   const dispatch = useDispatch();
 
-  const onLikes = () => {
-    dispatch(likeMessages(message.id, uid));
-    setLiked(true);
-  };
-  const unLikes = () => {
-    dispatch(unLikeMessages(message.id, uid));
-    setLiked(false);
-  };
-
   useEffect(() => {
     if (message.Likes.includes(uid)) setLiked(true);
     else setLiked(false);
-  }, [uid, message.Likes]);
+  }, [uid ,message.Likes,liked]);
+
+  const onLikes = () => {
+    dispatch(likeMessages(message.id,uid))
+    setLiked(true);
+  };
+  const unLikes = () => {
+    dispatch(unLikeMessages(message.id, uid))
+    setLiked(false);
+  };
+
+  
 
   return (
-    <>
-    
-      { liked === false && (<button className="like-container">
+    <div className="like-container">
+      {uid && liked === false && (
         <img src={Love} alt="logo like" onClick={onLikes} />
-        <span>{message.Likes.length}</span>
-        </button>
       )}
-      {liked && (<button className="like-container">
-         <img src={iLove} alt="logo like" onClick={unLikes} />
-
+      {uid && liked && <img src={iLove} alt="logo like" onClick={unLikes} />}
       <span>{message.Likes.length}</span>
-    </button>
-)}
-    </>
+    </div>
+    
   );
 };
 

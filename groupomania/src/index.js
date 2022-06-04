@@ -10,6 +10,7 @@ import rootReducer from "./reducers";
 import { composeWithDevTools } from "redux-devtools-extension";
 import logger from "redux-logger";
 import { getUsers } from "./actions/users.actions";
+import { getMessages } from "./actions/messages.actions";
 
 const store = createStore(
   rootReducer,
@@ -17,12 +18,13 @@ const store = createStore(
 );
 
 store.dispatch(getUsers());
+store.dispatch(getMessages());
 
 ReactDOM.render(
-  // <React.StrictMode>
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  // </React.StrictMode>,
+  <React.StrictMode>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </React.StrictMode>,
   document.getElementById("root")
 );
