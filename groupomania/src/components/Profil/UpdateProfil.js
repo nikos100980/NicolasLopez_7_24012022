@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { modifyBio } from "../../actions/user.actions";
 import SideBar from "../Sidebar/SideBar";
 import UploadImage from "./UploadImage";
+import DeleteProfil from "./DeleteProfil";
 
 import { dateParser } from "../Utils";
 
@@ -10,30 +11,30 @@ const UpdateProfil = () => {
   const [bio, setBio] = useState("");
   const [modifyForm, setModifyForm] = useState(false);
 
-  const userData = useSelector((state) => state.userReducer);
+  const user = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
 
   const handleModify = () => {
-    dispatch(modifyBio(userData.id, bio));
+    dispatch(modifyBio(user.id, bio));
     setModifyForm(false);
   };
 
   return (
     <div className="profil-container">
       <SideBar />
-      <h1>Profil de {userData.firstname}</h1>
+      <h1>Profil de {user.firstname}</h1>
       <div className="update-container">
         <div className="left-part">
           <h3>Photo de profil</h3>
-          {userData.picture ? (
+          {user.picture ? (
             <img
-              src={userData.picture}
+              src={user.picture}
               alt="user"
-              key={"userImage" + userData.id}
+              key={"userImage" + user.id}
             />
           ) : (
             <img
-              src={"http://localhost:8080/images/undefined.jpeg"}
+              src={"http://localhost:8080/images/undefined.png"}
               alt="user"
             />
           )}
@@ -45,7 +46,7 @@ const UpdateProfil = () => {
             {modifyForm === false && (
               <>
                 <p onClick={() => setModifyForm(!modifyForm)}>
-                  {userData.bio}{" "}
+                  {user.bio}{" "}
                 </p>
                 <button onClick={() => setModifyForm(!modifyForm)}>
                   Modifier
@@ -56,7 +57,7 @@ const UpdateProfil = () => {
               <>
                 <textarea
                   type="text"
-                  defaultValue={userData.bio}
+                  defaultValue={user.bio}
                   onChange={(e) => setBio(e.target.value)}
                 ></textarea>
                 <button onClick={handleModify}>
@@ -64,8 +65,13 @@ const UpdateProfil = () => {
                 </button>
               </>
             )}
+            <br />
+            <br />
+            <DeleteProfil id={user.id} />
+            <br />
+            <br />
           </div>
-          <h4>Inscrit depuis le : {dateParser(userData.createdAt)} </h4>
+          <h4>Inscrit depuis le : {dateParser(user.createdAt)} </h4>
         </div>
       </div>
     </div>

@@ -1,41 +1,60 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
 import { UidContext } from "../AppContext";
+import axios from "axios";
 import Love from "../assets/icons/icons8-like-24.png";
 import iLove from "../assets/icons/icons8-like-24 (2).png";
 
-import { likeMessages, unLikeMessages } from "../../actions/messages.actions";
-
 const LikeSystem = ({ message }) => {
-  const [liked, setLiked] = useState(false);
   const uid = useContext(UidContext);
-  const dispatch = useDispatch();
+  const [likeCounter, setLikeCounter] = useState("");
+  const userId = uid;
+  const messageId = message.id;
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    if (message.Likes.includes(uid)) setLiked(true);
-    else setLiked(false);
-  }, [uid ,message.Likes,liked]);
+    const likeNumber = async () => {
+      await axios({
+        method: "get",
+        url: `${process.env.REACT_APP_API_URL}api/likes/${message.id}`,
 
-  const onLikes = () => {
-    dispatch(likeMessages(message.id,uid))
-    setLiked(true);
-  };
-  const unLikes = () => {
-    dispatch(unLikeMessages(message.id, uid))
-    setLiked(false);
-  };
+        withCredentials: true,
+      }).then((res) => {
+        setLikeCounter(res.data.like);
+      });
+    };
 
-  
+    likeNumber();
+  }, [isLoaded, message.id]);
+
+  const likePost = async (e) => {
+    e.preventDefault();
+
+    await axios({
+      method: "post",
+      url: `${process.env.REACT_APP_API_URL}api/messages/likes`,
+      data: { userId, messageId },
+      withCredentials: true,
+    }).then(() => {
+      const likemap = message.Likes.map((value) => {
+        return value.userId;
+      });
+      console.log(likemap);
+       if (isLoaded) {
+        setIsLoaded(false);
+      } else {
+         setIsLoaded(true);
+       }
+    });
+  };
 
   return (
     <div className="like-container">
-      {uid && liked === false && (
-        <img src={Love} alt="logo like" onClick={onLikes} />
+      {isLoaded === false && (
+        <img src={Love} alt="logo like" onClick={likePost} />
       )}
-      {uid && liked && <img src={iLove} alt="logo like" onClick={unLikes} />}
-      <span>{message.Likes.length}</span>
+      {isLoaded && <img src={iLove} alt="logo like" onClick={likePost} />}
+      <span>{likeCounter}</span>
     </div>
-    
   );
 };
 

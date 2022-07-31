@@ -5,6 +5,7 @@ import {
   POST_LIKES,
   POST_UNLIKES,
   UPDATE_MESSAGES,
+  
 } from "../actions/messages.actions";
 import {
   ADD_COMMENTS,
@@ -37,7 +38,6 @@ export default function messageReducer(state = initialState, action) {
           return {
             ...message,
             Likes: [action.payload.userId, ...message.Likes],
-            
           };
         }
         return message;
@@ -47,12 +47,13 @@ export default function messageReducer(state = initialState, action) {
         if (message.id === action.payload.messageId) {
           return {
             ...message,
-            Likes: message.Likes.filter((id) => id !== action.payload.userId),  ...message.Likes,
-            
+            Likes: message.Likes.filter((id) => id !== action.payload.userId),
+             ...message.Likes,
           };
         }
         return message;
       });
+
     case GET_COMMENTS:
       return state.map((message) => {
         if (message.id === action.payload.messageId) {
@@ -78,7 +79,7 @@ export default function messageReducer(state = initialState, action) {
         if (message.id === action.payload.messageId) {
           return {
             ...message,
-            comments: message.comments.filter(
+            comments: message.Comments.filter(
               (comment) => comment.id !== action.payload.commentId
             ),
           };

@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import DeleteCard from "./DeleteCard";
 import Edit from "../assets/icons/icons8-modifier-16.png";
 
 import Bulle from "../assets/icons/message1.svg";
-
+import { getComments } from "../../actions/comments.actions";
 import LikeSystem from "./LikeSystem";
 import { updateMessages } from "../../actions/messages.actions";
 import CardComments from "./CardComments";
-import { getComments } from "../../actions/comments.actions";
+
 import dayjs from "dayjs";
+
 require("dayjs/locale/fr");
 let relativeTime = require("dayjs/plugin/relativeTime");
 dayjs.extend(relativeTime);
@@ -18,9 +19,10 @@ const Card = ({ message }) => {
   const [isUpdated, setIsUpdated] = useState(false);
   const [textUpdate, setTextUpdate] = useState(null);
   const [showComments, setShowComments] = useState(false);
-  const dispatch = useDispatch();
+
   const users = useSelector((state) => state.usersReducer);
   const user = useSelector((state) => state.userReducer);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (showComments) {
@@ -36,11 +38,11 @@ const Card = ({ message }) => {
   };
 
   return (
-    <li className="card-container" >
+    <li className="card-container" key={message.id}>
       <div className="card-left">
         {users.map((user) => {
           if (user.id === message.userId && user.picture) {
-            return <img src={user.picture} alt="user" />;
+            return <img src={user.picture} alt="user" key={"id" + message.id} />;
           } else if (user.id === message.userId && !user.picture) {
             return null;
           } else {
@@ -54,7 +56,7 @@ const Card = ({ message }) => {
             {users.map((user) => {
               if (user.id === message.userId) {
                 return (
-                  <h3>
+                  <h3 key={message.id}>
                     {user.firstname} {user.lastname}
                   </h3>
                 );
@@ -82,6 +84,7 @@ const Card = ({ message }) => {
           <img
             src={message.imageUrl}
             alt="illustration du message"
+            key={"messageImage" + user.id}
             className="card-pic"
           />
         )}
@@ -100,18 +103,17 @@ const Card = ({ message }) => {
               src={Bulle}
               alt="logo des commentaires"
             />
-            <span>Votre commentaire</span>
+            <span>commenter </span>
           </div>
           <LikeSystem message={message} />
         </div>
         {showComments && (
           <CardComments
-            comments={message.Comments}
+            comments={message.comments}
             messageId={message.id}
             userId={user.id}
           />
         )}
-        
       </div>
     </li>
   );

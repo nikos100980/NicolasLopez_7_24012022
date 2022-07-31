@@ -16,7 +16,7 @@ module.exports = (req, res, next) => {
             if(err){
                  res.locals.user = null;
                 console.log(err);
-                res.cookie( 'jwt','',{ maxAge: 1});
+                res.cookie( 'jwt','');
                 next();
             }else{
                 console.log('decodedToken'+ decodedToken);

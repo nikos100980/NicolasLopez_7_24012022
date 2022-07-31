@@ -220,8 +220,8 @@ exports.deleteMessage = async (req, res, next) => {
 exports.likeMessage = async (req, res, next) => {
   try {
     const userId = cookies.getUserId(req);
-    const messageId = req.params.id;
-    const likevalue = req.body.likevalue;
+    const {messageId} = req.body;
+    
     const userLiked = await models.Like.findOne({
       where: { userId, messageId},
     });
@@ -244,19 +244,21 @@ exports.likeMessage = async (req, res, next) => {
         await models.Like.create({
         userId,
         messageId,
-        likevalue ,
+        
       })
       .then(()=>{
-        console.log(userId);
+        console.log(userId,messageId);
         res.status(201).json({
          
           reponse: "Votre like a bien été ajouté !",
         });
       })
-      .catch((error)=>res.status(500).json({error}))
+      .catch((error)=>res.status(400).json({error}))
 
      
-    }
+    };
+    
+
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });
   }
@@ -265,32 +267,37 @@ exports.likeMessage = async (req, res, next) => {
 // Ajout du module pour le compatge des likes
 
 exports.likeCounter = async (req, res, next) => {
-  try{
-    await models.Like.findAll({
-      attributes: ["id", "userId","messageId"],
-    })
-    .then((userLikes)=>{
-      if(userLikes){
-        res.status(200).json(userLikes)
+  
 
-      }else{
-        res.status(404).json({error: "aucun like présent"})
-      }
-    })
-    .catch((error)=>{
-      res.status(400).json({error})
-    });
-  }catch(error){
-    return res.status(500).send({error: "Erreur serveur"});
-  }
-};
+    await models.Like.findAll({ where: { messageId: req.params.id } })
+    .then((like) => res.status(200).json({ like: like.length }))
+    .catch((error) => res.status(404).json({ error }));
+  //   await models.Like.findAll({
+  //     attributes: ["id", "userId","messageId"],
+  //   })
+  //   .then((userLikes)=>{
+  //     if(userLikes){
+  //       res.status(200).json(userLikes)
+
+  //     }else{
+  //       res.status(404).json({error: "aucun like présent"})
+  //     }
+  //   })
+  //   .catch((error)=>{
+  //     res.status(400).json({error})
+  //   });
+  // }catch(error){
+  //   return res.status(500).send({error: "Erreur serveur"});
+  // }
+
+  };
 
 // Ajout du module pour la récupération des commentaires attenant au message
 exports.getComments = async (req, res, next) => {
   try {
     await models.Comment.findAll({
       where: { messageId: req.params.id },
-      // attributes: ["id", "comments","userId","createdAt"],
+       attributes: ["id", "content","userId","messageId","createdAt"],
       // order: [["id", "DESC"]],
        
     })
@@ -311,7 +318,7 @@ exports.getComments = async (req, res, next) => {
 // Ajout du module pour la création d'un commentaire
 exports.createComment = async (req, res, next) => {
   try {
-     const messageId = req.params.id;
+    const messageId = req.params.id;
      const userId = cookies.getUserId(req);
     const comment = req.body.content;
     const firstname = req.body.firstname;

@@ -126,7 +126,7 @@ exports.getProfile = async (req, res) => {
   // on trouve l'utilisateur et on renvoie l'objet user
   try {
     const user = await models.User.findOne({
-      attributes: ["id", "firstname", "lastname", "bio", "picture","createdAt","updatedAt"],
+      attributes: ["id","isAdmin" ,"firstname", "lastname", "bio", "picture","createdAt","updatedAt"],
       where: { id: req.params.id },
     });
     res.status(200).send(user);
@@ -138,7 +138,7 @@ exports.getProfile = async (req, res) => {
 exports.getAllProfiles = async (req, res, next) => {
   try {
     const users = await models.User.findAll({
-      attributes: [ "id","firstname", "lastname", "picture", "bio"],
+      attributes: [ "id","isAdmin","firstname", "lastname", "picture", "bio"],
       where: {
         id: {
           [Op.ne]: 1,
@@ -222,24 +222,52 @@ userFound.bio = bio
 // Ajout du module pour supprimer le compte utilisateur
 exports.deleteProfile = async (req, res, next) => {
   try {
-    const userFound = await models.User.findOne({
-      where: { id: req.params.id },
-    });
+    models.Comment.destroy({ where: { userId: req.params.id } })
+        .then(() =>
+          models.Message.findAll({ where: { userId: req.params.id } })
+            .then(
+              (messages) => {
+                messages.forEach(
+                  (message) => {
+                    models.Comment.destroy({ where: { messageId: message.id } })
+                    models.Message.destroy({ where: { id: message.id } })
+                  }
+                )
+              }
+            )
+            .then(() =>
+              models.User.findOne({ where: { id: req.params.id } })
+                .then(user => {
+                  const filename = user.picture;
+                  fs.unlink(`images/${filename}`, () => {
+                    models.User.destroy({ where: { id: req.params.id } })
+                      .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
+                  })
+                })
+            )
+        )
+    
+    .catch(error => res.status(400).json({ error }));
+  }catch (error) {
+  return res.status(500).send({ error: "Erreur serveur" });}
+  //   const userFound = await models.User.findOne({
+  //     where: { id: req.params.id },
+  //   });
 
-    if (userFound.picture !== null) {
-      const filename = userFound.picture.split("images")[1];
-      fs.unlink(`images/${filename}`, () => {
-        models.User.destroy({ where: { id: req.params.id } });
-        res.status(200).json({ message: "Compte supprimé avec sa photo !" });
-      });
-    } else {
-      await models.User.destroy(
-        { where: { id: req.params.id } },
-        { truncate: true }
-      );
-      res.status(200).json({ message: "Votre compte a bien été supprimé" });
-    }
-  } catch (error) {
-    return res.status(500).send({ error: "Erreur serveur" });
-  }
+  //   if (userFound.picture !== null) {
+  //     const filename = userFound.picture.split("images")[1];
+  //     fs.unlink(`images/${filename}`, () => {
+  //       models.User.destroy({ where: { id: req.params.id } });
+  //       res.status(200).json({ message: "Compte supprimé avec sa photo !" });
+  //     });
+  //   } else {
+  //     await models.User.destroy(
+  //       { where: { id: req.params.id } },
+  //       { truncate: true }
+  //     );
+  //     res.status(200).json({ message: "Votre compte a bien été supprimé" });
+  //   }
+  // } catch (error) {
+  //   return res.status(500).send({ error: "Erreur serveur" });
+  // }
 };

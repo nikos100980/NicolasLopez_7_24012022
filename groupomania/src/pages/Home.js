@@ -5,6 +5,7 @@ import { UidContext } from "../components/AppContext";
 import NewMessage from "../components/Message/NewMessage";
 
 
+
 const Home = () => {
   const uid = useContext(UidContext);
 
@@ -21,9 +22,15 @@ const Home = () => {
           </div>
         </div>
       ) : (
-        <div className="home">
-          home
-          <div className="main">maison</div>
+        <div className="background_image">
+          
+          <div className="welcome">
+            <h3 className= "title" > Bienvenue</h3>
+            <br />
+            <br />
+            <p className="messages">sur le réseau social pour partager avec vos collègues !</p>
+          
+          </div>
         </div>
       )}
     </>
