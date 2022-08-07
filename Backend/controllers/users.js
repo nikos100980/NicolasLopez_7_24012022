@@ -21,22 +21,26 @@ const createToken = (id, isAdmin) => {
 // Le controller permettant la création d'un utilisateur avec le hash du mot de passe afin de sécuriser l'accés et les données confidentielles
 exports.signup = (req, res, next) => {
   const email = req.body.email;
-  const firstname = req.body.firstname;
-  const lastname = req.body.lastname;
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
   const password = req.body.password;
 
   const bio = req.body.bio;
-
+  const validEmailRegex = RegExp(/^([\w-\.]+)@((?:[\w]+\.)+)([a-zA-Z]{2,4})/i);
   if (
     email == null ||
-    firstname == null ||
-    lastname == null ||
+    firstName == null ||
+    lastName == null ||
     password == null
   ) {
     return res
       .status(400)
       .json({ error: "Merci de renseigner les champs obligatoires" });
   }
+  if (!validEmailRegex.test(email)) {
+    return res.status(400).json({ error: "Adresse mail non valide" });
+  }
+
   const emailCrypto = cryptoJs
     .HmacSHA256(email, `${process.env.CRYPTO_EMAIL}`)
     .toString();
@@ -52,18 +56,18 @@ exports.signup = (req, res, next) => {
           models.User.create({
             email: emailCrypto,
             password: hash,
-            firstname: firstname,
-            lastname: lastname,
+            firstName: firstName,
+            lastName: lastName,
             bio: bio,
 
             isAdmin: 0,
           })
 
-            .then((newUser) => {
-              return res.status(201).json({ userId: newUser.id });
+            .then(() => {
+              return res.status(201).json({ message: "Utilisateur créé !" });
             })
 
-            .catch((err) => res.status(500).json({ error: err }));
+            .catch((error) => res.status(500).json({ error }));
         });
       } else {
         return res
@@ -94,11 +98,16 @@ exports.login = (req, res, next) => {
   models.User.findOne({ where: { email: emailCrypto } })
     .then((userFound) => {
       if (!userFound) {
-        return res.status(404).json({ error: "Utilisateur non trouvé !" });
+        return res
+          .status(404)
+          .json({
+            error:
+              "Utilisateur non trouvé : Merci de verifier les informations saisies",
+          });
       }
       bcrypt.compare(password, userFound.password, (noValid, valid) => {
         if (!valid) {
-          return res.status(404).json({ error2: "Mot de passe incorrect !" });
+          return res.status(404).json({ error: "Mot de passe incorrect !" });
         }
         const token = createToken(userFound.id, userFound.isAdmin);
         res.cookie("jwt", token, { httpOnly: true, maxAge });
@@ -118,7 +127,6 @@ exports.login = (req, res, next) => {
 exports.logout = (req, res) => {
   res.clearCookie("jwt");
   res.status(200).json("OUT");
-  
 };
 
 // Ajout du module pour récuperer le profil de l'utilisateur
@@ -126,7 +134,16 @@ exports.getProfile = async (req, res) => {
   // on trouve l'utilisateur et on renvoie l'objet user
   try {
     const user = await models.User.findOne({
-      attributes: ["id","isAdmin" ,"firstname", "lastname", "bio", "picture","createdAt","updatedAt"],
+      attributes: [
+        "id",
+        "isAdmin",
+        "firstname",
+        "lastname",
+        "bio",
+        "picture",
+        "createdAt",
+        "updatedAt",
+      ],
       where: { id: req.params.id },
     });
     res.status(200).send(user);
@@ -138,7 +155,7 @@ exports.getProfile = async (req, res) => {
 exports.getAllProfiles = async (req, res, next) => {
   try {
     const users = await models.User.findAll({
-      attributes: [ "id","isAdmin","firstname", "lastname", "picture", "bio"],
+      attributes: ["id", "isAdmin", "firstname", "lastname", "picture", "bio"],
       where: {
         id: {
           [Op.ne]: 1,
@@ -183,15 +200,14 @@ exports.updateProfile = async (req, res, next) => {
       }
 
       if (bio || lastname || firstname || newPicture) {
-userFound.picture = newPicture
-userFound.bio = bio
+        userFound.picture = newPicture;
+        userFound.bio = bio;
 
         const updateUser = {
           bio,
           lastname,
           firstname,
-          newPicture
-          
+          newPicture,
         };
         await userFound
           .save(updateUser)
@@ -207,12 +223,10 @@ userFound.bio = bio
           });
       }
     } else {
-      res
-        .status(400)
-        .json({
-          messageRetour:
-            "Veuillez contacter votre administrateur pour effectuer cette action !",
-        });
+      res.status(400).json({
+        messageRetour:
+          "Veuillez contacter votre administrateur pour effectuer cette action !",
+      });
     }
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });
@@ -223,33 +237,35 @@ userFound.bio = bio
 exports.deleteProfile = async (req, res, next) => {
   try {
     models.Comment.destroy({ where: { userId: req.params.id } })
-        .then(() =>
-          models.Message.findAll({ where: { userId: req.params.id } })
-            .then(
-              (messages) => {
-                messages.forEach(
-                  (message) => {
-                    models.Comment.destroy({ where: { messageId: message.id } })
-                    models.Message.destroy({ where: { id: message.id } })
-                  }
-                )
+      .then(() =>
+        models.Message.findAll({ where: { userId: req.params.id } })
+          .then((messages) => {
+            messages.forEach((message) => {
+              models.Comment.destroy({ where: { messageId: message.id } });
+              models.Message.destroy({ where: { id: message.id } });
+            });
+          })
+          .then(() =>
+            models.User.findOne({ where: { id: req.params.id } }).then(
+              (user) => {
+                const filename = user.picture;
+                fs.unlink(`images/${filename}`, () => {
+                  models.User.destroy({ where: { id: req.params.id } }).then(
+                    () =>
+                      res
+                        .status(200)
+                        .json({ message: "Utilisateur supprimé !" })
+                  );
+                });
               }
             )
-            .then(() =>
-              models.User.findOne({ where: { id: req.params.id } })
-                .then(user => {
-                  const filename = user.picture;
-                  fs.unlink(`images/${filename}`, () => {
-                    models.User.destroy({ where: { id: req.params.id } })
-                      .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
-                  })
-                })
-            )
-        )
-    
-    .catch(error => res.status(400).json({ error }));
-  }catch (error) {
-  return res.status(500).send({ error: "Erreur serveur" });}
+          )
+      )
+
+      .catch((error) => res.status(400).json({ error }));
+  } catch (error) {
+    return res.status(500).send({ error: "Erreur serveur" });
+  }
   //   const userFound = await models.User.findOne({
   //     where: { id: req.params.id },
   //   });

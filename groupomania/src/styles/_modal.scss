@@ -62,8 +62,12 @@
 .error{
   padding-top: 5px;
   color: $color-error;
+  font-weight: bold;
 }
-
+.success {
+  color: $color-1;
+  font-weight: bold;
+}
 
 .modal-input {
   box-sizing: border-box;
