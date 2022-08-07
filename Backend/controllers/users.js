@@ -94,11 +94,11 @@ exports.login = (req, res, next) => {
   models.User.findOne({ where: { email: emailCrypto } })
     .then((userFound) => {
       if (!userFound) {
-        return res.status(401).json({ error: "Utilisateur non trouvé !" });
+        return res.status(404).json({ error: "Utilisateur non trouvé !" });
       }
       bcrypt.compare(password, userFound.password, (noValid, valid) => {
         if (!valid) {
-          return res.status(401).json({ error: "Mot de passe incorrect !" });
+          return res.status(404).json({ error2: "Mot de passe incorrect !" });
         }
         const token = createToken(userFound.id, userFound.isAdmin);
         res.cookie("jwt", token, { httpOnly: true, maxAge });

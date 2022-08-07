@@ -15,16 +15,18 @@ require("dayjs/locale/fr");
 let relativeTime = require("dayjs/plugin/relativeTime");
 dayjs.extend(relativeTime);
 
-const Card = ({ message }) => {
+const Card = ({ message}) => {
   const [isUpdated, setIsUpdated] = useState(false);
   const [textUpdate, setTextUpdate] = useState(null);
   const [showComments, setShowComments] = useState(false);
-
+  
   const users = useSelector((state) => state.usersReducer);
   const user = useSelector((state) => state.userReducer);
   const dispatch = useDispatch();
 
   useEffect(() => {
+    
+  
     if (showComments) {
       dispatch(getComments(message.id));
     }
@@ -42,7 +44,9 @@ const Card = ({ message }) => {
       <div className="card-left">
         {users.map((user) => {
           if (user.id === message.userId && user.picture) {
-            return <img src={user.picture} alt="user" key={"id" + message.id} />;
+            return (
+              <img src={user.picture} alt="user" key={"id" + message.id} />
+            );
           } else if (user.id === message.userId && !user.picture) {
             return null;
           } else {
@@ -103,7 +107,7 @@ const Card = ({ message }) => {
               src={Bulle}
               alt="logo des commentaires"
             />
-            <span>commenter </span>
+            <span>{message.Comments.length }</span>
           </div>
           <LikeSystem message={message} />
         </div>

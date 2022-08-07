@@ -59,17 +59,18 @@ exports.createMessage = async (req, res, next) => {
 exports.getMessages = async (req, res, next) => {
   try {
     await models.Message.findAll({
-      attributes: ["id", "content", "attachment", "imageUrl","userId","createdAt"],
+      // attributes: ["id", "content", "attachment", "imageUrl","userId","createdAt"],
       order: [["id", "DESC"]],
        include: [
           {
           model: models.Like,
             attributes: ["id","userId","messageId"],
            },
-         {
+          {
           model: models.Comment,
-          attributes: ["content", "userId", "id"],
-          order: [["id", "DESC"]],}
+           attributes: ["content", "userId", "createdAt"],
+             order: [["createdAt", "DESC"]],
+          }
       //     include: [
       //        {
       //          model: models.User,
@@ -77,7 +78,7 @@ exports.getMessages = async (req, res, next) => {
       //        },
       //      ],
       //   },
-       ]
+        ]
     })
       .then((messages) => {
         if (messages) {
@@ -297,7 +298,7 @@ exports.getComments = async (req, res, next) => {
   try {
     await models.Comment.findAll({
       where: { messageId: req.params.id },
-       attributes: ["id", "content","userId","messageId","createdAt"],
+      //  attributes: ["id", "content","userId","messageId","createdAt"],
       // order: [["id", "DESC"]],
        
     })

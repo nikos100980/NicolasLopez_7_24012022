@@ -21,7 +21,7 @@ export const getComments = (messageId) => {
         console.log(comment);
         dispatch({
           type: GET_COMMENTS,
-          payload: {messageId, comments:comment.data}
+          payload: {messageId, comments: comment.data}
         });
       })
       .catch((err) => console.log(err));
@@ -40,7 +40,7 @@ export const addComment = (messageId, userId, content) => {
         console.log(res);
         dispatch({
           type: ADD_COMMENTS,
-          payload: {messageId, comments: res.data},
+          payload: {messageId,userId,content},
         });
       })
       .catch((err) => console.log(err));

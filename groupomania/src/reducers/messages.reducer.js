@@ -79,7 +79,7 @@ export default function messageReducer(state = initialState, action) {
         if (message.id === action.payload.messageId) {
           return {
             ...message,
-            comments: message.Comments.filter(
+            comments: message.comments.filter(
               (comment) => comment.id !== action.payload.commentId
             ),
           };

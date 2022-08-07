@@ -17,6 +17,7 @@ export const getMessages = () => {
       })
       .then((res)=>{
         dispatch({ type: GET_MESSAGES, payload: res.data });
+        console.log(res);
       })
       
     . catch( (error)=> 
@@ -25,7 +26,7 @@ export const getMessages = () => {
   };
 };
 
-export const addMessages = (data, userId) => {
+export const addMessages = (data) => {
   return (dispatch) => {
     
       return axios({
@@ -35,9 +36,9 @@ export const addMessages = (data, userId) => {
 
         data,
       })
-      .then((res)=>{
-        dispatch({ type: ADD_MESSAGES, payload: res.data, userId });
-      })
+      .then((res)=>
+        console.log(res)
+      )
       
     . catch((err)=>console.log(err))
     

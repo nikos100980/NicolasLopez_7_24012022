@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import LoginForm from "./LoginForm";
 
 const RegisterForm = () => {
   const [firstname, setFirstname] = useState("");
@@ -7,12 +8,24 @@ const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [ctrlPassword, setCtrlPassword] = useState("");
+  const [formSubmit, setFormSubmit] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
+    const pseudoError = document.querySelector(".pseudo.error");
+    const emailError = document.querySelector(".email.error");
+    const passwordError = document.querySelector(".password.error");
+    const confirmPasswordError = document.querySelector(".password-conf.error");
+
+    confirmPasswordError.innerHTML = "";
+    passwordError.innerHTML = "";
+    emailError.innerHTML = "";
+    
+
     if (password !== ctrlPassword) {
-      window.alert("Merci de verifier les mots de passe !");
+      confirmPasswordError.innerHTML =
+        "Les mots de passe ne correspondent pas !";
     } else {
       await axios({
         method: "post",
@@ -27,16 +40,49 @@ const RegisterForm = () => {
       })
         .then((res) => {
           console.log(res);
-          window.location = "/";
+          setFormSubmit(true);
         })
-        .catch((error) => {
-          console.log(error);
+        .catch((err) => {
+          if (err.response.data.error.length === 3) {
+            emailError.innerHTML = err.response.data.error[0].message;
+            passwordError.innerHTML = err.response.data.error[1].message;
+            pseudoError.innerHTML = err.response.data.error[2].message;
+          }
+          if (err.response.data.error.length === 2) {
+            if (err.response.data.error[0].path === "email") {
+              emailError.innerHTML = err.response.data.error[0].message;
+              if (err.response.data.error[1].path === "password") {
+                passwordError.innerHTML = err.response.data.error[1].message;
+              } else {
+                pseudoError.innerHTML = err.response.data.error[1].message;
+              }
+            } else if (err.response.data.error[0].path === "password") {
+              passwordError.innerHTML = err.response.data.error[0].message;
+              pseudoError.innerHTML = err.response.data.error[1].message;
+            }
+          } else {
+            if (err.response.data.error[0].path === "email") {
+              emailError.innerHTML = err.response.data.error[0].message;
+            } else if (err.response.data.error[0].path ==="password") {
+              passwordError.innerHTML = err.response.data.error[0].message;
+            } else if (err.response.data.error[0].path === "pseudo") {
+              pseudoError.innerHTML = err.response.data.error[0].message;
+            }
+          }
         });
     }
   };
 
   return (
     <div>
+      {formSubmit ? (
+        <>
+          <LoginForm />
+          <h4 className="success">
+            Enregistrement réussi, veuillez-vous connecter
+          </h4>
+        </>
+      ) : (
       <form action="" onSubmit={handleRegister}>
         <div className="form-group">
           <label htmlFor="firstname">Votre prénom</label>
@@ -60,6 +106,8 @@ const RegisterForm = () => {
             className="modal-input"
           />
         </div>
+        <div className="pseudo error"></div>
+        <br />
         <div className="form-group">
           <label htmlFor="email">Votre email</label>
           <input
@@ -71,6 +119,8 @@ const RegisterForm = () => {
             className="modal-input"
           />
         </div>
+        <div className="email error"></div>
+        <br />
         <div className="form-group">
           <label htmlFor="password">Votre mot de passe</label>
           <input
@@ -82,6 +132,8 @@ const RegisterForm = () => {
             className="modal-input"
           />
         </div>
+        <div className="password-conf error"></div>
+        <br />
         <div className="form-group">
           <label htmlFor="password-control">Confirmez votre mot de passe</label>
           <input
@@ -97,6 +149,7 @@ const RegisterForm = () => {
           <input type="submit" value="S'inscrire" className="modal-submit" />
         </div>
       </form>
+      )}
     </div>
   );
 };

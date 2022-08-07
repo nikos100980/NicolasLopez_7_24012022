@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addComment, getComments } from "../../actions/comments.actions";
 
@@ -10,7 +10,7 @@ require("dayjs/locale/fr");
 let relativeTime = require("dayjs/plugin/relativeTime");
 dayjs.extend(relativeTime);
 
-const CardComments = ({ comments, messageId, userId }) => {
+const CardComments = ({ messageId, comments, userId }) => {
   const [content, setContent] = useState("");
 
   const users = useSelector((state) => state.usersReducer);
@@ -21,16 +21,18 @@ const CardComments = ({ comments, messageId, userId }) => {
     e.preventDefault();
 
     if (content) {
-      dispatch(addComment(messageId, userId, content,comments));
-        dispatch(getComments());
-         setContent("");
+      dispatch(addComment(messageId, userId, content));
+      setTimeout(() => {
+        dispatch(getComments(messageId));
+      }, 200);
+
+      setContent("");
+    }else{
+      alert ("Vous n'avez rien renseigné!")
     }
   };
-  // useEffect(() => {
-  //   dispatch(getComments(messageId));
-  // }, [dispatch, messageId]);
 
-  //   console.log(user.isAdmin);
+  console.log(user.isAdmin);
 
   return (
     <div className="comments-container">
