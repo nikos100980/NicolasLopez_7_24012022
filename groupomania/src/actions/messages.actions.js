@@ -7,7 +7,7 @@ export const POST_LIKES = "POST_LIKES";
 export const POST_UNLIKES = "POST_UNLIKES";
 
 
-export const getMessages = () => {
+export const getMessages = (num) => {
   return  (dispatch) => {
     
       return axios({
@@ -26,7 +26,7 @@ export const getMessages = () => {
   };
 };
 
-export const addMessages = (data) => {
+export const addMessages = (data,userId) => {
   return (dispatch) => {
     
       return axios({
@@ -37,8 +37,9 @@ export const addMessages = (data) => {
         data,
       })
       .then((res)=>
-        console.log(res)
-      )
+      {
+        dispatch({ type: ADD_MESSAGES, payload: res.data, userId });
+  })
       
     . catch((err)=>console.log(err))
     
@@ -87,8 +88,8 @@ export const likeMessages = (messageId, userId) => {
     
       return axios({
         method: "post",
-        url: `${process.env.REACT_APP_API_URL}api/messages/${messageId}/likes`,
-        data: { id: userId},
+        url: `${process.env.REACT_APP_API_URL}api/messages/likes`,
+        data: { messageId,userId},
         withCredentials: true,
       })
       .then(()=>{
@@ -106,8 +107,8 @@ export const unLikeMessages = (messageId, userId) => {
     
       return axios({
         method: "post",
-        url: `${process.env.REACT_APP_API_URL}api/messages/${messageId}/dislikes`,
-        data: { id: userId },
+        url: `${process.env.REACT_APP_API_URL}api/messages/likes`,
+        data: { userId,messageId },
         withCredentials: true,
       })
       .then(()=>{

@@ -16,10 +16,10 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, callback) => {
     // nouveau nom du fichier image pour éviter les doublons
-    const name = file.originalname.split('.').slice(0,-1).join('.');
-    resultName = name.split(' ').join('_');
+    const name = file.originalname.split('.')[0].split(" ").join("_");
+    
     const extension = MIME_TYPES[file.mimetype];
-    callback(null, resultName + Date.now() + "." + extension);
+    callback(null, name + "_"+ Date.now() + "." + extension);
   },
 });
 module.exports = multer({ storage: storage }).single("image"); // stockage de l'image publiée

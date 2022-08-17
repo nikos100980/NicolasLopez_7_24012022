@@ -5,7 +5,7 @@ import { getMessages } from "../actions/messages.actions";
 import Card from "./Message/Card";
 
 const FilActu = () => {
-  const [loadMessage, setLoadMessage] = useState(true);
+  const [loadMessage, setLoadMessage] = useState(false);
   const dispatch = useDispatch();
   const messages = useSelector((state) => state.messageReducer);
 
@@ -13,7 +13,7 @@ const FilActu = () => {
     if (loadMessage) {
       dispatch(getMessages());
 
-      setLoadMessage(false);
+      setLoadMessage(true);
     }
   }, [dispatch, loadMessage]);
 

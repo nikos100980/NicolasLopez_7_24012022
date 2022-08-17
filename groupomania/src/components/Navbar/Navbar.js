@@ -34,7 +34,7 @@ const Navbar = () => {
           <ul className="liste">
             <li className="hello ">
               <NavLink to="/profil">
-                <h5>Bienvenue, {userData.firstname}</h5>
+                <h5>Bienvenue, {userData.firstName}</h5>
               </NavLink>
             </li>
             <Logout />

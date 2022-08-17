@@ -14,11 +14,11 @@ exports.createMessage = async (req, res, next) => {
   const attachment = req.body.attachment;
 
   try {
-    let imageUrl= req.body.imageUrl;
+    let imageUrl = req.body.imageUrl;
     await models.User.findOne({
       where: { id: userId },
     })
-      .then( (userFound) => {
+      .then((userFound) => {
         if (userFound) {
           if (req.file) {
             imageUrl = `${req.protocol}://${req.get("host")}/images/${
@@ -32,16 +32,13 @@ exports.createMessage = async (req, res, next) => {
             content: content,
             attachment: attachment,
             likes: 0,
-            imageUrl:imageUrl,
+            imageUrl: imageUrl,
             UserId: userFound.id,
-          })
-          
-            res.status(201).json({
-            
-              reponse: "Votre message a bien été posté !",
-            });
-          
-          
+          });
+
+          res.status(201).json({
+            reponse: "Votre message a bien été posté !",
+          });
         } else {
           res.status(500).json({ message: "ça bloque" });
         }
@@ -59,26 +56,22 @@ exports.createMessage = async (req, res, next) => {
 exports.getMessages = async (req, res, next) => {
   try {
     await models.Message.findAll({
-      // attributes: ["id", "content", "attachment", "imageUrl","userId","createdAt"],
       order: [["id", "DESC"]],
-       include: [
-          {
+      include: [
+        {
+          model: models.User,
+          attributes: ["firstName", "lastName", "picture", "id"],
+        },
+        {
           model: models.Like,
-            attributes: ["id","userId","messageId"],
-           },
-          {
-          model: models.Comment,
-           attributes: ["content", "userId", "createdAt"],
-             order: [["createdAt", "DESC"]],
-          }
-      //     include: [
-      //        {
-      //          model: models.User,
-      //          attributes: ["picture", "lastname", "firstname"],
-      //        },
-      //      ],
-      //   },
-        ]
+          // attributes: ["id","userId","messageId"],
+        },
+        // {
+        //   model: models.Comment,
+        //   attributes: ["content", "userId", "id", "createdAt"],
+        //   //  order: [["createdAt", "DESC"]],
+        // },
+      ],
     })
       .then((messages) => {
         if (messages) {
@@ -145,9 +138,10 @@ exports.updateMessage = async (req, res, next) => {
     let newImageUrl = req.body.imageUrl;
     const content = req.body.content;
     const attachment = req.body.attachment;
+    const admin = await models.User.findOne({ where: { id: userId } });
     const messageFound = await models.Message.findOne({ where: { id: id } });
 
-    if (userId === messageFound.UserId) {
+    if (userId === messageFound.UserId || admin.isAdmin===true) {
       if (req.file) {
         newImageUrl = `${req.protocol}://${req.get("host")}/images/${
           req.file.filename
@@ -186,31 +180,37 @@ exports.updateMessage = async (req, res, next) => {
 
 exports.deleteMessage = async (req, res, next) => {
   try {
+    
+
     const userId = cookies.getUserId(req);
     const id = req.params.id;
-    const admin = await models.Message.findOne({ where: { id: userId } });
+    const admin = await models.User.findOne({ where: { id: userId } });
     const messageFound = await models.Message.findOne({ where: { id } });
 
     if (userId === messageFound.UserId || admin.isAdmin === true) {
       if (messageFound.imageUrl) {
         const filename = messageFound.imageUrl.split("/images")[1];
         fs.unlink(`images/${filename}`, () => {
-          models.Message.destroy({ where: { id: messageFound.id } });
-          res.status(200).json({
-            message:
-              "Votre message avec votre piece jointe a bien été supprimé !",
-          });
+          models.Comment.destroy({ where: { messageId: id } })
+          .then(() => {
+            models.Message.destroy({ where: { id } });
+          })
+            .then(()=>{
+              res.status(200).json({
+                message:
+                  "Votre message avec votre piece jointe a bien été supprimé !",
+              })
+            })
+            .catch(error => res.status(400).json({ error }))
         });
       } else {
-        models.Message.destroy(
-          { where: { id: messageFound.id } },
-          { truncate: true }
-        );
-        res
-          .status(200)
-          .json({ message: "Votre message a bien été supprimé !" });
-      }
-    }
+        models.Comment.destroy({ where: { messageId: req.params.id } })
+         .then(() =>
+            models.Message.destroy({ where: { id: req.params.id } })
+             .then(() => res.status(200).json({ message: 'message supprimé !' }))
+         )
+     .catch(error => res.status(400).json({ error }))
+      }}
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });
   }
@@ -221,45 +221,33 @@ exports.deleteMessage = async (req, res, next) => {
 exports.likeMessage = async (req, res, next) => {
   try {
     const userId = cookies.getUserId(req);
-    const {messageId} = req.body;
-    
+    const { messageId } = req.body;
+
     const userLiked = await models.Like.findOne({
-      where: { userId, messageId},
+      where: { userId, messageId },
     });
-    
+
     if (userLiked !== null) {
-      await models.Like.destroy(
-        { where: {userId, messageId} },
-        { truncate: true, restartIdentity: true }
-      );
-      
-        console.log({ userId, messageId });
-        res.status(200).json({
-          message:
-            "Votre demande de ne plus aimer se message a bien été prise en compte !",
-        }); 
-      
-      
-      
+      await models.Like.destroy({ where: { userId, messageId } });
+
+      console.log({ userId, messageId });
+      res.status(200).json({
+        message:
+          "Votre demande de ne plus aimer se message a bien été prise en compte !",
+      });
     } else {
-        await models.Like.create({
+      await models.Like.create({
         userId,
         messageId,
-        
       })
-      .then(()=>{
-        console.log(userId,messageId);
-        res.status(201).json({
-         
-          reponse: "Votre like a bien été ajouté !",
-        });
-      })
-      .catch((error)=>res.status(400).json({error}))
-
-     
-    };
-    
-
+        .then(() => {
+          console.log(userId, messageId);
+          res.status(201).json({
+            reponse: "Votre like a bien été ajouté !",
+          });
+        })
+        .catch((error) => res.status(400).json({ error }));
+    }
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });
   }
@@ -268,39 +256,18 @@ exports.likeMessage = async (req, res, next) => {
 // Ajout du module pour le compatge des likes
 
 exports.likeCounter = async (req, res, next) => {
-  
-
-    await models.Like.findAll({ where: { messageId: req.params.id } })
+  await models.Like.findAll({ where: { messageId: req.params.id } })
     .then((like) => res.status(200).json({ like: like.length }))
     .catch((error) => res.status(404).json({ error }));
-  //   await models.Like.findAll({
-  //     attributes: ["id", "userId","messageId"],
-  //   })
-  //   .then((userLikes)=>{
-  //     if(userLikes){
-  //       res.status(200).json(userLikes)
-
-  //     }else{
-  //       res.status(404).json({error: "aucun like présent"})
-  //     }
-  //   })
-  //   .catch((error)=>{
-  //     res.status(400).json({error})
-  //   });
-  // }catch(error){
-  //   return res.status(500).send({error: "Erreur serveur"});
-  // }
-
-  };
+};
 
 // Ajout du module pour la récupération des commentaires attenant au message
 exports.getComments = async (req, res, next) => {
   try {
     await models.Comment.findAll({
       where: { messageId: req.params.id },
-      //  attributes: ["id", "content","userId","messageId","createdAt"],
-      // order: [["id", "DESC"]],
-       
+       attributes: ["id", "content","userId","messageId","createdAt"],
+      
     })
       .then((messages) => {
         if (messages) {
@@ -320,10 +287,10 @@ exports.getComments = async (req, res, next) => {
 exports.createComment = async (req, res, next) => {
   try {
     const messageId = req.params.id;
-     const userId = cookies.getUserId(req);
+    const userId = cookies.getUserId(req);
     const comment = req.body.content;
-    const firstname = req.body.firstname;
-    const lastname = req.body.lastname;
+    const firstname = req.body.firstName;
+    const lastname = req.body.lastName;
 
     const newComment = {
       content: comment,

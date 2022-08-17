@@ -40,7 +40,7 @@ export const addComment = (messageId, userId, content) => {
         console.log(res);
         dispatch({
           type: ADD_COMMENTS,
-          payload: {messageId,userId,content},
+          payload: {messageId,comments:res.data},
         });
       })
       .catch((err) => console.log(err));

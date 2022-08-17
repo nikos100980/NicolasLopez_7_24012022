@@ -27,8 +27,8 @@ const CardComments = ({ messageId, comments, userId }) => {
       }, 200);
 
       setContent("");
-    }else{
-      alert ("Vous n'avez rien renseigné!")
+    } else {
+      alert("Vous n'avez rien renseigné!");
     }
   };
 
@@ -42,16 +42,10 @@ const CardComments = ({ messageId, comments, userId }) => {
           comments.map((comment) => {
             return (
               <div className="comment-container">
-                <div className="left-part">
+                <div className="left-part" key={comment.id}>
                   {users.map((user) => {
                     if (user.id === comment.userId && user.picture) {
-                      return (
-                        <img
-                          src={user.picture}
-                          key={"id" + comment.id}
-                          alt="user"
-                        />
-                      );
+                      return <img src={user.picture} alt="user" />;
                     } else if (user.id === comment.id && !user.picture) {
                       return null;
                     } else {
@@ -63,10 +57,10 @@ const CardComments = ({ messageId, comments, userId }) => {
                   <div className="comment-header">
                     <div className="pseudo">
                       {users.map((user) => {
-                        if (user.id === comment.userId && user.firstname) {
+                        if (user.id === comment.userId && user.firstName) {
                           return (
                             <h3>
-                              {user.firstname} {user.lastname}
+                              {user.firstName} {user.lastName}
                             </h3>
                           );
                         } else {

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { isEmpty, timestampParser } from "../Utils";
 import { NavLink } from "react-router-dom";
 import { addMessages, getMessages } from "../../actions/messages.actions";
+import Picture from "../../components/assets/icons/icons8-image-16.png";
 
 const NewMessage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -79,7 +80,7 @@ const NewMessage = () => {
               <div className="icon">
                 {isEmpty(messageUrl) && (
                   <>
-                    <img src="./img/icons/picture.svg" alt="img" />
+                    <img src={Picture} alt="img" />
                     <input
                       type="file"
                       id="file"

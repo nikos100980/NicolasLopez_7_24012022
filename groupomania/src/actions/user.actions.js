@@ -57,7 +57,8 @@ export const deleteProfil = (userId) => {
                 withCredentials:true,
             })
             .then((res) => {
-                dispatch({ type: DELETE_PROFIL, payload: {userId} })
+                dispatch({ type: DELETE_PROFIL, payload: {userId} });
+                
             })
             .catch((err) => console.log(err))
     };

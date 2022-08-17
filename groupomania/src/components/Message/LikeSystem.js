@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import { UidContext } from "../AppContext";
 import axios from "axios";
-import Love from "../assets/icons/icons8-like-24.png";
 import iLove from "../assets/icons/icons8-like-24 (2).png";
+import Love from "../assets/icons/icons8-like-24.png";
+
 
 const LikeSystem = ({ message }) => {
   const uid = useContext(UidContext);

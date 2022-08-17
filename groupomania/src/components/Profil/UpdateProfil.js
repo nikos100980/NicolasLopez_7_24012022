@@ -5,6 +5,7 @@ import SideBar from "../Sidebar/SideBar";
 import UploadImage from "./UploadImage";
 import DeleteProfil from "./DeleteProfil";
 
+
 import { dateParser } from "../Utils";
 
 const UpdateProfil = () => {
@@ -22,7 +23,7 @@ const UpdateProfil = () => {
   return (
     <div className="profil-container">
       <SideBar />
-      <h1>Profil de {user.firstname}</h1>
+      <h1>Profil de {user.firstName}</h1>
       <div className="update-container">
         <div className="left-part">
           <h3>Photo de profil</h3>
