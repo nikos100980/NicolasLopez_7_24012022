@@ -13,8 +13,9 @@ module.exports = {
         type: Sequelize.STRING
       },
       picture: {
-        allowNull: true,
+        allowNull: false,
         type: Sequelize.STRING
+        
       },
       lastName: {
         allowNull: false,

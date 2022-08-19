@@ -4,8 +4,7 @@ import { modifyBio } from "../../actions/user.actions";
 import SideBar from "../Sidebar/SideBar";
 import UploadImage from "./UploadImage";
 import DeleteProfil from "./DeleteProfil";
-
-
+import Avatar from "../assets/icons/undefined.png";
 import { dateParser } from "../Utils";
 
 const UpdateProfil = () => {
@@ -28,14 +27,10 @@ const UpdateProfil = () => {
         <div className="left-part">
           <h3>Photo de profil</h3>
           {user.picture ? (
-            <img
-              src={user.picture}
-              alt="user"
-              key={"userImage" + user.id}
-            />
+            <img src={user.picture} alt="user" key={"userImage" + user.id} />
           ) : (
             <img
-              src={"http://localhost:8080/images/undefined.png"}
+              src={Avatar}
               alt="user"
             />
           )}
@@ -46,9 +41,7 @@ const UpdateProfil = () => {
             <h3>A propos de vous</h3>
             {modifyForm === false && (
               <>
-                <p onClick={() => setModifyForm(!modifyForm)}>
-                  {user.bio}{" "}
-                </p>
+                <p onClick={() => setModifyForm(!modifyForm)}>{user.bio} </p>
                 <button onClick={() => setModifyForm(!modifyForm)}>
                   Modifier
                 </button>

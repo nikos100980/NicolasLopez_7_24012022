@@ -31,7 +31,7 @@ exports.createMessage = async (req, res, next) => {
           models.Message.create({
             content: content,
             attachment: attachment,
-            likes: 0,
+
             imageUrl: imageUrl,
             UserId: userFound.id,
           });
@@ -64,13 +64,7 @@ exports.getMessages = async (req, res, next) => {
         },
         {
           model: models.Like,
-          // attributes: ["id","userId","messageId"],
         },
-        // {
-        //   model: models.Comment,
-        //   attributes: ["content", "userId", "id", "createdAt"],
-        //   //  order: [["createdAt", "DESC"]],
-        // },
       ],
     })
       .then((messages) => {
@@ -141,7 +135,7 @@ exports.updateMessage = async (req, res, next) => {
     const admin = await models.User.findOne({ where: { id: userId } });
     const messageFound = await models.Message.findOne({ where: { id: id } });
 
-    if (userId === messageFound.UserId || admin.isAdmin===true) {
+    if (userId === messageFound.UserId || admin.isAdmin === true) {
       if (req.file) {
         newImageUrl = `${req.protocol}://${req.get("host")}/images/${
           req.file.filename
@@ -180,8 +174,6 @@ exports.updateMessage = async (req, res, next) => {
 
 exports.deleteMessage = async (req, res, next) => {
   try {
-    
-
     const userId = cookies.getUserId(req);
     const id = req.params.id;
     const admin = await models.User.findOne({ where: { id: userId } });
@@ -192,25 +184,27 @@ exports.deleteMessage = async (req, res, next) => {
         const filename = messageFound.imageUrl.split("/images")[1];
         fs.unlink(`images/${filename}`, () => {
           models.Comment.destroy({ where: { messageId: id } })
-          .then(() => {
-            models.Message.destroy({ where: { id } });
-          })
-            .then(()=>{
+            .then(() => {
+              models.Message.destroy({ where: { id } });
+            })
+            .then(() => {
               res.status(200).json({
                 message:
                   "Votre message avec votre piece jointe a bien été supprimé !",
-              })
+              });
             })
-            .catch(error => res.status(400).json({ error }))
+            .catch((error) => res.status(400).json({ error }));
         });
       } else {
         models.Comment.destroy({ where: { messageId: req.params.id } })
-         .then(() =>
-            models.Message.destroy({ where: { id: req.params.id } })
-             .then(() => res.status(200).json({ message: 'message supprimé !' }))
-         )
-     .catch(error => res.status(400).json({ error }))
-      }}
+          .then(() =>
+            models.Message.destroy({ where: { id: req.params.id } }).then(() =>
+              res.status(200).json({ message: "message supprimé !" })
+            )
+          )
+          .catch((error) => res.status(400).json({ error }));
+      }
+    }
   } catch (error) {
     return res.status(500).send({ error: "Erreur serveur" });
   }
@@ -266,8 +260,7 @@ exports.getComments = async (req, res, next) => {
   try {
     await models.Comment.findAll({
       where: { messageId: req.params.id },
-       attributes: ["id", "content","userId","messageId","createdAt"],
-      
+      attributes: ["id", "content", "userId", "messageId", "createdAt"],
     })
       .then((messages) => {
         if (messages) {

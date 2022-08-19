@@ -5,10 +5,10 @@ export const UPLOAD_PICTURE = "UPLOAD_PICTURE";
 export const MODIFY_BIO = "MODIFY_BIO";
 export const DELETE_PROFIL = "DELETE_PROFIL";
 
-export const getUser = (id,data) => {
+export const getUser = (id, data) => {
   return (dispatch) => {
     return axios
-      .get(`${process.env.REACT_APP_API_URL}api/auth/profiles/${id}`,data)
+      .get(`${process.env.REACT_APP_API_URL}api/auth/profiles/${id}`, data)
       .then((res) => {
         dispatch({ type: GET_USER, payload: res.data });
       })
@@ -47,19 +47,17 @@ export const modifyBio = (userId, bio) => {
   };
 };
 
-
 export const deleteProfil = (userId) => {
-    return (dispatch) => {
-        return axios
-            ({
-                method: "delete",
-                url: `${process.env.REACT_APP_API_URL}api/auth/profiles/` + userId,
-                withCredentials:true,
-            })
-            .then((res) => {
-                dispatch({ type: DELETE_PROFIL, payload: {userId} });
-                
-            })
-            .catch((err) => console.log(err))
-    };
+  return (dispatch) => {
+    return axios({
+      method: "delete",
+      url: `${process.env.REACT_APP_API_URL}api/auth/profiles/` + userId,
+      withCredentials: true,
+    })
+      .then((res) => {
+        dispatch({ type: DELETE_PROFIL, payload: { userId } });
+        
+      })
+      .catch((err) => console.log(err));
+  };
 };

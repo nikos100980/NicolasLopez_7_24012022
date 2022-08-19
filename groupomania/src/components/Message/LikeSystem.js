@@ -4,7 +4,6 @@ import axios from "axios";
 import iLove from "../assets/icons/icons8-like-24 (2).png";
 import Love from "../assets/icons/icons8-like-24.png";
 
-
 const LikeSystem = ({ message }) => {
   const uid = useContext(UidContext);
   const [likeCounter, setLikeCounter] = useState("");
@@ -21,6 +20,7 @@ const LikeSystem = ({ message }) => {
         withCredentials: true,
       }).then((res) => {
         setLikeCounter(res.data.like);
+        console.log(res.data.like);
       });
     };
 
@@ -40,11 +40,11 @@ const LikeSystem = ({ message }) => {
         return value.userId;
       });
       console.log(likemap);
-       if (isLoaded) {
+      if (isLoaded) {
         setIsLoaded(false);
       } else {
-         setIsLoaded(true);
-       }
+        setIsLoaded(true);
+      }
     });
   };
 

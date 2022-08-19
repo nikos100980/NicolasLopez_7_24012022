@@ -13,17 +13,17 @@ const NewMessage = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer);
 
-  const handlePost =  () => {
+  const handlePost = async () => {
     if (content || messageUrl) {
-      const data =  new FormData();
+      const data = new FormData();
       data.append("content", content);
 
       data.append("userId", user.id);
       data.append("image", messageUrl);
 
-      dispatch(addMessages(data));
+      await dispatch(addMessages(data));
 
-       dispatch(getMessages());
+      dispatch(getMessages());
       cancelPost();
     } else {
       alert("Entrez votre message");
@@ -91,13 +91,16 @@ const NewMessage = () => {
                   </>
                 )}
                 {messageUrl && (
-                  <button className="btn-input" onClick={() => setMessageUrl("")}>
+                  <button
+                    className="btn-input"
+                    onClick={() => setMessageUrl("")}
+                  >
                     Supprimer photo
                   </button>
                 )}
               </div>
               <div className="btn-send">
-                {content  || messageUrl ? (
+                {content || messageUrl ? (
                   <button className="cancel" onClick={cancelPost}>
                     {" "}
                     Annuler message{" "}

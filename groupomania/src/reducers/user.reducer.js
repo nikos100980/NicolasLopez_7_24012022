@@ -1,4 +1,9 @@
-import { GET_USER, MODIFY_BIO, UPLOAD_PICTURE,DELETE_PROFIL} from "../actions/user.actions";
+import {
+  GET_USER,
+  MODIFY_BIO,
+  UPLOAD_PICTURE,
+  DELETE_PROFIL,
+} from "../actions/user.actions";
 
 const initialState = {};
 
@@ -16,11 +21,9 @@ export default function userReducer(state = initialState, action) {
         ...state,
         bio: action.payload,
       };
-      case DELETE_PROFIL:
-                return action.payload.userId;
+    case DELETE_PROFIL:
+      return action.payload.userId;
     default:
       return state;
   }
-   
-    
 }

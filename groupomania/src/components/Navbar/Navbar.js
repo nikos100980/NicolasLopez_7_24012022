@@ -26,7 +26,7 @@ const Navbar = () => {
       <div className="nav-container">
         <NavLink to="/">
           <div className="logo">
-            <img src={Logo} alt="logo groupomania"className="groupo-icon" />
+            <img src={Logo} alt="logo groupomania" className="groupo-icon" />
             <h3>Groupomania</h3>
           </div>
         </NavLink>

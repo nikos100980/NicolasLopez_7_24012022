@@ -117,43 +117,46 @@
       justify-content: space-between;
       margin: 0 auto;
       width: 100%;
-      
-      
-      
 
       .icon {
         position: relative;
         cursor: pointer;
         width: 30px;
         height: 20px;
-        padding-top:15px ;
-        
+        padding-top: 15px;
 
         img {
           position: absolute;
           height: 24px;
           width: 24px;
-          
+
           transform: translate(-15px, -1px);
         }
 
         button {
           width: 190px;
-          padding: 10px 20px;
+          padding: 10px 5px;
           background: $color-2;
           transition: 0.2s;
-          position: absolute;
+          // position: absolute;
           transform: translate(-15px, -5px);
 
           &:hover {
-            letter-spacing: 1px !important;
+            
             background: $color-1;
+          }
+          @media screen and(max-width: 662px) {
+            width: 150px;
+            
+          }
+          @media screen and(max-width: 562px) {
+            display: none;
           }
         }
 
         input {
-          width: 24px;
-          height: 24px;
+          width: 25px;
+          height: 25px;
           position: absolute;
           transform: translate(-15px, -1px);
           opacity: 0;

@@ -4,8 +4,6 @@ import FilActu from "../components/FilActu";
 import { UidContext } from "../components/AppContext";
 import NewMessage from "../components/Message/NewMessage";
 
-
-
 const Home = () => {
   const uid = useContext(UidContext);
 
@@ -23,13 +21,17 @@ const Home = () => {
         </div>
       ) : (
         <div className="background_image">
-          
           <div className="welcome">
-            <h3 className= "title" > Bienvenue</h3>
+            <h1 className="title"> Bienvenue</h1>
             <br />
             <br />
-            <p className="messages">sur le réseau social pour partager avec vos collègues !</p>
-          
+            <p className="messages">
+              Votre espace d'échange est à present disponible!
+            </p>
+            <br />
+            <p className="messages">
+              Venez intéragir avec l'ensemble des collaborateurs du groupe !
+            </p>
           </div>
         </div>
       )}

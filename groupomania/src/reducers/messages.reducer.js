@@ -2,10 +2,7 @@ import {
   ADD_MESSAGES,
   DELETE_MESSAGES,
   GET_MESSAGES,
-  POST_LIKES,
-  POST_UNLIKES,
   UPDATE_MESSAGES,
-  
 } from "../actions/messages.actions";
 import {
   ADD_COMMENTS,
@@ -32,27 +29,6 @@ export default function messageReducer(state = initialState, action) {
       });
     case DELETE_MESSAGES:
       return state.filter((message) => message.id !== action.payload.messageId);
-    case POST_LIKES:
-      return state.map((message) => {
-        if (message.id === action.payload.messageId) {
-          return {
-            ...message,
-            Likes: [action.payload.userId, ...message.Likes],
-          };
-        }
-        return message;
-      });
-    case POST_UNLIKES:
-      return state.map((message) => {
-        if (message.id === action.payload.messageId) {
-          return {
-            ...message,
-            Likes: message.Likes.filter((id) => id !== action.payload.userId),
-             ...message.Likes,
-          };
-        }
-        return message;
-      });
 
     case GET_COMMENTS:
       return state.map((message) => {

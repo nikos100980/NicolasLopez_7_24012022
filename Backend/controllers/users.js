@@ -53,7 +53,6 @@ exports.signup = (req, res, next) => {
     .then((userFound) => {
       if (!userFound) {
         bcrypt.hash(password, 10, (err, hash) => {
-          
           models.users
             .create({
               email: emailCrypto,
@@ -172,7 +171,6 @@ exports.getAllProfiles = async (req, res, next) => {
 // Ajout du module pour mettre à jour le profil de l'utilisateur
 exports.updateProfile = async (req, res, next) => {
   try {
-    
     const bio = req.body.bio;
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
@@ -235,32 +233,27 @@ exports.updateProfile = async (req, res, next) => {
 };
 
 // Ajout du module pour supprimer le compte utilisateur
-exports.deleteProfile =   (req, res, next) => {
+exports.deleteProfile = (req, res, next) => {
   models.Comment.destroy({ where: { userId: req.params.id } })
+    .then(() =>
+      models.Message.findAll({ where: { userId: req.params.id } })
+        .then((messages) => {
+          messages.forEach((message) => {
+            models.Comment.destroy({ where: { messageId: message.id } });
+            models.Message.destroy({ where: { id: message.id } });
+          });
+        })
         .then(() =>
-          models.Message.findAll({ where: { userId: req.params.id } })
-            .then(
-              (messages) => {
-                messages.forEach(
-                  (message) => {
-                    models.Comment.destroy({ where: { messageId: message.id } })
-                    models.Message.destroy({ where: { id: message.id } })
-                  }
-                )
-              }
-            )
-            .then(() =>
-              models.User.findOne({ where: { id: req.params.id } })
-                .then(user => {
-                  const filename = user.picture;
-                  fs.unlink(`images/${filename}`, () => {
-                    models.User.destroy({ where: { id: req.params.id } })
-                      .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
-                  })
-                })
-            )
+          models.User.findOne({ where: { id: req.params.id } }).then((user) => {
+            const filename = user.picture;
+            fs.unlink(`images/${filename}`, () => {
+              models.User.destroy({ where: { id: req.params.id } }).then(() =>
+                res.status(200).json({ message: "Utilisateur supprimé !" })
+              );
+            });
+          })
         )
-    
-    .catch(error => res.status(400).json({ error }));
-};
+    )
 
+    .catch((error) => res.status(400).json({ error }));
+};

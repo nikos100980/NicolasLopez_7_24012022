@@ -36,16 +36,16 @@ const CardComments = ({ messageId, comments, userId }) => {
 
   return (
     <div className="comments-container">
-      <ul>
+      <ul >
         {comments &&
           comments.length > 0 &&
           comments.map((comment) => {
             return (
-              <div className="comment-container">
+              <div className="comment-container" >
                 <div className="left-part" key={comment.id}>
                   {users.map((user) => {
                     if (user.id === comment.userId && user.picture) {
-                      return <img src={user.picture} alt="user" />;
+                      return <img src={user.picture} alt="user" key={user.id} />;
                     } else if (user.id === comment.id && !user.picture) {
                       return null;
                     } else {

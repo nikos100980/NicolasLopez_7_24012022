@@ -43,7 +43,7 @@ const Card = ({ message }) => {
         {users.map((user) => {
           if (user.id === message.userId && user.picture) {
             return (
-              <img src={user.picture} alt="user" key={"id" + message.id} />
+              <img src={user.picture} alt="user" key={user.id} />
             );
           } else if (user.id === message.userId && !user.picture) {
             return null;
@@ -53,12 +53,12 @@ const Card = ({ message }) => {
         })}
       </div>
       <div className="card-right">
-        <div className="card-header" >
+        <div className="card-header">
           <div className="pseudo">
             {users.map((user) => {
               if (user.id === message.userId) {
                 return (
-                  <h3 >
+                  <h3 key={user.id}>
                     {user.firstName} {user.lastName}
                   </h3>
                 );
@@ -86,7 +86,7 @@ const Card = ({ message }) => {
           <img
             src={message.imageUrl}
             alt="illustration du message"
-            key={"messageImage" + user.id}
+             key={"messageImage" + user.id}
             className="card-pic"
           />
         )}
@@ -107,7 +107,7 @@ const Card = ({ message }) => {
             />
             <span>commentaires</span>
           </div>
-          <LikeSystem message={message}  />
+          <LikeSystem message={message} />
         </div>
         {showComments && (
           <CardComments

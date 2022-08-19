@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       }),
         models.Message.hasMany(models.Comment, { onDelete: "cascade" });
-        models.Message.hasMany(models.Like, { onDelete: "cascade" });
+      models.Message.hasMany(models.Like, { onDelete: "cascade" });
     }
   }
   Message.init(
@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
       content: DataTypes.STRING,
       attachment: DataTypes.STRING,
       imageUrl: DataTypes.STRING,
-      likes: DataTypes.INTEGER,
+      
     },
     {
       sequelize,
