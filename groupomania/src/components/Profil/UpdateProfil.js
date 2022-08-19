@@ -72,7 +72,7 @@ const UpdateProfil = () => {
             <br />
             <br />
           </div>
-          <h4>Inscrit depuis le : {dateParser(user.createdAt)} </h4>
+          <h4>Inscrit depuis le {dateParser(user.createdAt)}</h4>
         </div>
       </div>
     </div>

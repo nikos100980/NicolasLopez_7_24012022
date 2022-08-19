@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 
-import Logo from "../assets/icons/icon-left-font-monochrome-black.png";
+import Logo from "../assets/icons/icon.png";
 
 import RegisterForm from "../Modal/RegisterForm";
 import LoginForm from "../Modal/LoginForm";
@@ -26,7 +26,8 @@ const Navbar = () => {
       <div className="nav-container">
         <NavLink to="/">
           <div className="logo">
-            <img src={Logo} alt="logo groupomania" />
+            <img src={Logo} alt="logo groupomania"className="groupo-icon" />
+            <h3>Groupomania</h3>
           </div>
         </NavLink>
 

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { isEmpty, timestampParser } from "../Utils";
 import { NavLink } from "react-router-dom";
 import { addMessages, getMessages } from "../../actions/messages.actions";
-import Picture from "../../components/assets/icons/icons8-image-16.png";
+import Picture from "../../components/assets/icons/picture.svg";
 
 const NewMessage = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -13,17 +13,17 @@ const NewMessage = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.userReducer);
 
-  const handlePost = async () => {
+  const handlePost =  () => {
     if (content || messageUrl) {
-      const data = new FormData();
+      const data =  new FormData();
       data.append("content", content);
 
       data.append("userId", user.id);
       data.append("image", messageUrl);
 
-      await dispatch(addMessages(data));
+      dispatch(addMessages(data));
 
-      dispatch(getMessages());
+       dispatch(getMessages());
       cancelPost();
     } else {
       alert("Entrez votre message");
@@ -91,13 +91,13 @@ const NewMessage = () => {
                   </>
                 )}
                 {messageUrl && (
-                  <button onClick={() => setMessageUrl("")}>
+                  <button className="btn-input" onClick={() => setMessageUrl("")}>
                     Supprimer photo
                   </button>
                 )}
               </div>
               <div className="btn-send">
-                {content > 3 || messageUrl ? (
+                {content  || messageUrl ? (
                   <button className="cancel" onClick={cancelPost}>
                     {" "}
                     Annuler message{" "}
