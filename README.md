@@ -14,10 +14,10 @@ L'application a plusieurs fonctionnalitées :
 
 
 
-### Installation
+## Installation
 
 
-## Backend
+### Backend
 
 Ouvrir le terminal et se positionner dans le dossier backend
 
@@ -36,7 +36,7 @@ pour finir lancer le serveur
 ```bash
 nodemon server
 ```
-## Frontend
+### Frontend
 
 Ouvrir le terminal et se positionner dans le dossier frontend
 
