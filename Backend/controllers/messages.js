@@ -40,7 +40,7 @@ exports.createMessage = async (req, res, next) => {
             reponse: "Votre message a bien été posté !",
           });
         } else {
-          res.status(500).json({ message: "ça bloque" });
+          res.status(404).json({ message: "ça bloque" });
         }
       })
       .catch((error) => {

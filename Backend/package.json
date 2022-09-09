@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+    
   },
   "author": "",
   "license": "ISC",
@@ -22,7 +23,7 @@
     "mysql": "^2.18.1",
     "mysql2": "^2.3.3",
     "node": "^17.4.0",
-    "nodemon": "^2.0.15",
+    "nodemon": "^2.0.19",
     "password-validator": "^5.2.1",
     "sequelize": "^6.15.0"
   },

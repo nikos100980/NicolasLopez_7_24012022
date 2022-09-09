@@ -12,7 +12,7 @@ const { Op } = require("sequelize");
 // Importation du module crypto js afin de l'utiliser dans le cadre des recommandations RGPD pour le masquage des données sensibles ( en l'occurence là l'email)
 const cryptoJs = require("crypto-js");
 
-const maxAge = 3 * 24 * 60 * 1000;
+const maxAge = 1 * 24 * 60 *60* 1000;
 const createToken = (id, isAdmin) => {
   return jwt.sign({ id, isAdmin }, `${process.env.RANDOM_TOKEN_SECRET}`, {
     expiresIn: maxAge,

@@ -80,7 +80,7 @@ const NewMessage = () => {
               <div className="icon">
                 {isEmpty(messageUrl) && (
                   <>
-                    <img src={Picture} alt="img" />
+                    <img  src={Picture} alt="img" />
                     <input
                       type="file"
                       id="file"
