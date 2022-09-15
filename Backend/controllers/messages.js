@@ -141,7 +141,7 @@ exports.updateMessage = async (req, res, next) => {
           req.file.filename
         }`;
         if (messageFound.imageUrl) {
-          const filename = messageFound.imageUrl.split("./images")[1];
+          const filename = messageFound.imageUrl.split("images")[1];
           fs.unlink(`images/${filename}`, (err) => {
             if (err) console.log(err);
             else {

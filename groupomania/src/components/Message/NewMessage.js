@@ -14,7 +14,7 @@ const NewMessage = () => {
   const user = useSelector((state) => state.userReducer);
 
   const handlePost = async () => {
-    if (content || messageUrl) {
+    if (content && messageUrl) {
       const data = new FormData();
       data.append("content", content);
 
@@ -26,7 +26,7 @@ const NewMessage = () => {
       dispatch(getMessages());
       cancelPost();
     } else {
-      alert("Entrez votre message");
+      alert("Veuillez entrer un message et une image. Merci");
     }
   };
 

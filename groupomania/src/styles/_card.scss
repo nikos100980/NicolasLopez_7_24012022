@@ -122,12 +122,42 @@
       }
     }
     .update-post {
+      width: 95%;
+      
       textarea {
         font-size: 1.3rem;
         border: 1px solid $color-2;
         padding: 10px;
         border-radius: 20px 20px 6px 20px;
       }
+      .icon-update {
+        margin-top: 5px;
+        display: flex;
+        cursor: pointer;
+        width:auto;
+        height: 25px;
+        color: #4E5166;
+    }
+    .icon-update-img {
+      height: 30px;
+      width: 30px;
+      opacity: 1;
+      position: absolute;
+      
+      
+  }
+  .input-update-form {
+    position: absolute;
+        opacity: 1;
+        transform: translate(-38px, -50%);
+        cursor: pointer;
+        padding: 10px 20px;
+
+        @media screen and(max-width: 1121px) {
+          opacity: 0;
+        }
+    
+}
       .button-container {
         .btn {
           background: $color-2;

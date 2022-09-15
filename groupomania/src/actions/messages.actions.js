@@ -4,6 +4,7 @@ export const UPDATE_MESSAGES = "UPDATE_MESSAGES";
 export const DELETE_MESSAGES = "DELETE_MESSAGES";
 export const GET_MESSAGES = "GET_MESSAGES";
 
+
 export const getMessages = (num) => {
   return (dispatch) => {
     return axios({
@@ -37,21 +38,23 @@ export const addMessages = (data, userId) => {
   };
 };
 
-export const updateMessages = (messageId, content) => {
+export const updateMessages = (messageId, data) => {
   return (dispatch) => {
     return axios({
       method: "put",
       url: `${process.env.REACT_APP_API_URL}api/messages/` + messageId,
       withCredentials: true,
-      data: { content },
+      data,
     })
-      .then(() => {
-        dispatch({ type: UPDATE_MESSAGES, payload: { content, messageId } });
+      .then((res) => {
+        dispatch({ type: UPDATE_MESSAGES, payload: res.data});
       })
 
       .catch((err) => console.log(err));
   };
 };
+
+
 
 export const deleteMessage = (messageId) => {
   return (dispatch) => {

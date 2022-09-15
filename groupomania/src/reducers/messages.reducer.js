@@ -3,6 +3,7 @@ import {
   DELETE_MESSAGES,
   GET_MESSAGES,
   UPDATE_MESSAGES,
+  
 } from "../actions/messages.actions";
 import {
   ADD_COMMENTS,
@@ -27,6 +28,7 @@ export default function messageReducer(state = initialState, action) {
           };
         } else return message;
       });
+
     case DELETE_MESSAGES:
       return state.filter((message) => message.id !== action.payload.messageId);
 
